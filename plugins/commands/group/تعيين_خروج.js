@@ -1,9 +1,9 @@
 import { join } from "path";
 
 const config = {
-    name: "setleave",
-    description: "set leave message/gif",
-    usage: "[text/reply/help]",
+    name: "تعيين_خروج",
+    description: "تعيين رسالة/صورة متحركة عند مغادرة عضو",
+    usage: "[نص/رد/مساعدة]",
     cooldown: 3,
     permissions: [1, 2],
     credits: "XaviaTeam"
@@ -29,13 +29,13 @@ const langData = {
         "deleted": "Đã xóa tin nhắn/gif chào tạm biệt thành công!"
     },
     "ar_SY": {
-        "help": "إستعمال: setleave [text/reply/help]\n\nمثال: setleave مع السلامة {leftName}! سنفتقدك!",
-        "noContent": "الرجاء إدخال/الرد على الرسالة/gif التي تريد تعيينها!",
-        "success": "تعيين رسالة الخروج/gif بنجاح!",
-        "error": "حدث خطأ ، يرجى المحاولة مرة أخرى!",
-        "errorGif": "حدث خطأ أثناء تنزيل ملف gif ، يرجى المحاولة مرة أخرى!",
-        "attachmentShouldBeGif": "يجب أن يكون المرفق صورة gif!",
-        "deleted": "تم حذف رسالة الخروج/gif بنجاح!"
+        "help": "الاستخدام: setleave [نص/رد/مساعدة]\n\nمثال: setleave مع السلامة {leftName}! سنفتقدك!",
+        "noContent": "الرجاء إدخال أو الرد على الرسالة/الصورة المتحركة التي تريد تعيينها!",
+        "success": "تم تعيين رسالة/صورة المغادرة بنجاح!",
+        "error": "حدث خطأ، يرجى المحاولة مرة أخرى!",
+        "errorGif": "حدث خطأ أثناء تنزيل الصورة المتحركة، يرجى المحاولة مرة أخرى!",
+        "attachmentShouldBeGif": "يجب أن يكون المرفق صورة متحركة (GIF)!",
+        "deleted": "تم حذف رسالة/صورة المغادرة بنجاح!"
     }
 }
 
@@ -121,4 +121,4 @@ export default {
     config,
     langData,
     onCall
-}
+            }
