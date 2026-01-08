@@ -4,6 +4,9 @@ const langData = {
     },
     "vi_VN": {
         "welcomeBack": "Chào mừng trở lại!"
+    },
+    "ar_SY": {
+        "welcomeBack": "أهلاً بعودتك!"
     }
 }
 
@@ -11,7 +14,6 @@ function checkAFK(senderData) {
     if (senderData.data && senderData.data.afk && senderData.data.afk.status) {
         return true;
     }
-
 }
 
 async function onCall({ message, getLang }) {
