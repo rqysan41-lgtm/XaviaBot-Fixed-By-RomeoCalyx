@@ -1,5 +1,5 @@
 const config = {
-    name: "threadnoti",
+    name: "اشعار",
     permissions: [1, 2],
     description: "Turn on/off thread notification for yourself",
     usage: "[on/off]",
@@ -15,6 +15,7 @@ const langData = {
         "threadnoti.alreadyOff": "Thread notification is already turned off.",
         "error": "An error occurred, please try again later."
     },
+
     "vi_VN": {
         "threadnoti.on": "Thông báo nhóm đã được bật.",
         "threadnoti.off": "Thông báo nhóm đã được tắt.",
@@ -22,12 +23,14 @@ const langData = {
         "threadnoti.alreadyOff": "Thông báo nhóm đã được tắt từ trước.",
         "error": "Đã có lỗi xảy ra, vui lòng thử lại sau."
     },
+
+    // ====== الردود العربية فقط ======
     "ar_SY": {
-        "threadnoti.on": "تم تشغيل إعلامات المجموعة.",
-        "threadnoti.off": "تم إيقاف تشغيل إعلامات المجموعة.",
-        "threadnoti.alreadyOn": "تم تمكين إعلامات المجموعة بالفعل.",
-        "threadnoti.alreadyOff": "تم إيقاف تشغيل إعلامات المجموعة من قبل.",
-        "error": "لقد حدث خطأ، رجاء أعد المحاولة لاحقا."
+        "threadnoti.on": "تم تفعيل إشعارات المجموعة لك بنجاح ✅",
+        "threadnoti.off": "تم إيقاف إشعارات المجموعة لك ❌",
+        "threadnoti.alreadyOn": "إشعارات المجموعة مفعّلة لك بالفعل",
+        "threadnoti.alreadyOff": "إشعارات المجموعة متوقفة لك بالفعل",
+        "error": "حصل خطأ، حاول مرة أخرى لاحقاً"
     }
 }
 
@@ -81,4 +84,4 @@ export default {
     config,
     langData,
     onCall
-}
+        }
