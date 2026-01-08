@@ -1,9 +1,9 @@
 import { join } from "path";
 
 const config = {
-    name: "setjoin",
-    description: "set join message/gif",
-    usage: "[text/reply/help]",
+    name: "ترحيب", // بدل setjoin
+    description: "تعيين رسالة/صورة ترحيب", // بدل set join message/gif
+    usage: "[نص/رد/مساعدة]", // بدل [text/reply/help]
     cooldown: 3,
     permissions: [1, 2],
     credits: "XaviaTeam"
@@ -29,13 +29,13 @@ const langData = {
         "deleted": "Đã xóa tin nhắn/gif chào mừng thành công!"
     },
     "ar_SY": {
-        "help": "إستعمال: setjoin [text/reply/help]\n\nمثال: setjoin أهلا وسهلا {members} الى {threadName}!\nانت {newCount} عضو جديد!",
-        "noContent": "الرجاء إدخال / الرد على الرسالة/gif تريد أن تضع!",
-        "success": "تعيين رسالة الانضمام/gif بنجاح!",
-        "error": "حدث خطأ ، يرجى المحاولة مرة أخرى!",
-        "errorGif": "حدث خطأ أثناء تنزيل ملف gif ، يرجى المحاولة مرة أخرى!",
-        "attachmentShouldBeGif": "يجب أن يكون المرفق صورة gif!",
-        "deleted": "تم حذف رسالة الانضمام /gif بنجاح!"
+        "help": "طريقة الاستخدام: ترحيب [نص/رد/مساعدة]\n\nمثال: ترحيب مرحباً {members} في {threadName}!\nأنت العضو رقم {newCount}!",
+        "noContent": "يرجى كتابة أو الرد على الرسالة/الصورة المتحركة التي تريد تعيينها!",
+        "success": "تم تعيين رسالة أو صورة الترحيب بنجاح!",
+        "error": "حدث خطأ ما، يرجى المحاولة مرة أخرى!",
+        "errorGif": "حدث خطأ أثناء تنزيل الصورة المتحركة (GIF)، يرجى المحاولة مرة أخرى!",
+        "attachmentShouldBeGif": "يجب أن يكون المرفق صورة متحركة بصيغة GIF!",
+        "deleted": "تم حذف رسالة أو صورة الترحيب بنجاح!"
     }
 }
 
@@ -121,4 +121,4 @@ export default {
     config,
     langData,
     onCall
-}
+                              }
