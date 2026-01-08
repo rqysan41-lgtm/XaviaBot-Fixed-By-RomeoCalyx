@@ -1,6 +1,6 @@
 const config = {
     name: "ابتايم",
-    aliases: ["upt"],
+    aliases: ["ابتايم"],
     credits: "XaviaTeam"
 }
 
