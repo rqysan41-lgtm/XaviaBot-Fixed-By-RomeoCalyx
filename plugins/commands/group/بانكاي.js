@@ -1,7 +1,7 @@
 const config = {
-    name: "kick",
-    description: "kick user",
-    usage: "[reply/@mention]",
+    name: "بانكاي",
+    description: "طرد عضو من المجموعة",
+    usage: "[رد/@منشن]",
     cooldown: 5,
     permissions: [1],
     credits: "XaviaTeam",
@@ -19,6 +19,7 @@ const langData = {
         kickFail: "Failed to kick {fail} user(s)",
         error: "An error occurred, please try again later",
     },
+
     vi_VN: {
         missingTarget: "Vui lòng tag hoặc reply tin nhắn của người cần kick",
         botNotAdmin:
@@ -31,18 +32,23 @@ const langData = {
         kickFail: "Kick thất bại {fail} người",
         error: "Đã có lỗi xảy ra, vui lòng thử lại sau",
     },
+
     ar_SY: {
-        missingTarget: "يرجى وضع علامة أو الرد على رسالة المستخدم للركلة",
-        botNotAdmin: "يجب أن يكون البوت مسؤولا لطرد المستخدم",
-        botTarget: "لماذا تريد طرد البوت من المجموعة :<?",
-        senderTarget: "لماذا تريد طرد نفسك من المجموعة :v?",
-        botAndSenderTarget: "لماذا تريد طرد البوت ونفسك من المجموعة :v?",
-        kickResult: "تم طرد {success} مستخدم",
-        kickFail: "فشل ركل {fail} مستخدم",
-        error: "لقد حدث خطأ، رجاء أعد المحاولة لاحقا",
+        missingTarget: "يرجى منشن العضو أو الرد على رسالته لطرده",
+        botNotAdmin: "يجب أن يكون البوت مشرفاً ليتمكن من طرد الأعضاء",
+        botTarget: "ليش داير تطرد البوت من القروب؟ :<?",
+        senderTarget: "ليش داير تطرد نفسك من القروب؟ :v?",
+        botAndSenderTarget:
+            "ليش داير تطرد البوت ونفسك مع بعض؟ :v?",
+        kickResult: "تم طرد {success} عضو بنجاح",
+        kickFail: "فشل طرد {fail} عضو",
+        error: "حصل خطأ، حاول مرة ثانية لاحقاً",
     },
 };
 
+/* ===============================
+   دالة الطرد
+================================ */
 function kick(userID, threadID) {
     return new Promise((resolve, reject) => {
         global.api.removeUserFromGroup(userID, threadID, (err) => {
@@ -52,15 +58,43 @@ function kick(userID, threadID) {
     });
 }
 
+/* ===============================
+   دالة إرسال صورة قبل الطرد
+   🔴 عدّل الرابط إلى صورتك
+================================ */
+async function sendKickImage(threadID) {
+    return new Promise((resolve, reject) => {
+        global.api.sendMessage(
+            {
+                body: "🚫 تم اتخاذ قرار الطرد...",
+                attachment: global.utils.getStreamFromURL(
+                    "https://i.imgur.com/XXXXX.jpg" // ← حط رابط صورتك هنا
+                ),
+            },
+            threadID,
+            (err) => {
+                if (err) return reject(err);
+                resolve();
+            }
+        );
+    });
+}
+
+/* ===============================
+   المناداة الأساسية
+================================ */
 async function onCall({ message, getLang, data }) {
     if (!message.isGroup) return;
+
     const { threadID, mentions, senderID, messageReply, type, reply } = message;
+
     try {
         if (Object.keys(mentions).length == 0 && type != "message_reply")
             return reply(getLang("missingTarget"));
 
         const threadInfo = data.thread.info;
         const { adminIDs } = threadInfo;
+
         const targetIDs =
             Object.keys(mentions).length > 0
                 ? Object.keys(mentions)
@@ -68,10 +102,13 @@ async function onCall({ message, getLang, data }) {
 
         if (!adminIDs.some((e) => e == global.botID))
             return reply(getLang("botNotAdmin"));
+
         if (targetIDs.length == 1 && targetIDs[0] == global.botID)
             return reply(getLang("botTarget"));
+
         if (targetIDs.length == 1 && targetIDs[0] == senderID)
             return reply(getLang("senderTarget"));
+
         if (
             targetIDs.length == 2 &&
             targetIDs.some((e) => e == global.botID) &&
@@ -81,11 +118,19 @@ async function onCall({ message, getLang, data }) {
 
         let success = 0,
             fail = 0;
+
         for (const targetID of targetIDs) {
             if (targetID == global.botID || targetID == senderID) continue;
+
             try {
+                // 🔔 إرسال الصورة قبل الطرد
+                await sendKickImage(threadID);
+                await global.utils.sleep(800);
+
+                // ❌ تنفيذ الطرد
                 await kick(targetID, threadID);
                 await global.utils.sleep(500);
+
                 success++;
             } catch (e) {
                 console.error(e);
