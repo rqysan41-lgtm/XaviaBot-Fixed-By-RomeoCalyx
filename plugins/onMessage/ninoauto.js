@@ -6,7 +6,7 @@ const langData = {
         "noResult": "Nino không hiểu bạn đang nói gì :("
     },
     "ar_SY": {
-        "noResult": "نينو لا تفهم ما تقول :("
+        "noResult": "نينو لا يفهم ما تقول 😅"
     }
 }
 
@@ -50,4 +50,4 @@ export default {
     onLoad,
     langData,
     onCall
-}
+        }
