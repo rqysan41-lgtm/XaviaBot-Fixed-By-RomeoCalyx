@@ -1,8 +1,8 @@
 const config = {
-    name: "rules",
-    aliases: ["rule"],
-    description: "Setting rules for group",
-    usage: "[add/remove] [rule]",
+    name: "القواعد", // بدل rules
+    aliases: ["قاعدة"], // بدل rule
+    description: "تعيين قواعد للمجموعة", // بدل Setting rules for group
+    usage: "[إضافة/حذف] [القاعدة]", // بدل [add/remove] [rule]
     cooldown: 3,
     permissions: [0, 1, 2],
     credits: "XaviaTeam"
@@ -36,17 +36,17 @@ const langData = {
         "error": "An error has occurred"
     },
     "ar_SY": {
-        "dataNotReady": "البيانات ليست جاهزة",
-        "noPermission": "ليس لديك صلاحيات كافية لاستخدام هذا",
+        "dataNotReady": "البيانات غير جاهزة",
+        "noPermission": "ليس لديك صلاحيات كافية لتنفيذ هذا الأمر",
         "noRule": "لم تدخل أي محتوى",
         "ruleExists": "هذه القاعدة موجودة بالفعل",
         "addedRule": "تمت إضافة قاعدة جديدة:\n{rule} (#{addedRuleIndex})",
-        "missingIndexes": "لم تدخل فهرس القاعدة للحذف أو أن الفهرس غير صالح",
+        "missingIndexes": "لم تدخل رقم القاعدة للحذف أو الرقم غير صالح",
         "confirmRemove": "تفاعل ب 👍 لتأكيد إزالة القاعدة: {indexes}",
-        "removedRules": "تمت الإزالة بنجاح!",
-        "noRules": "لم يتم وضع قواعد",
+        "removedRules": "تمت إزالة القواعد بنجاح!",
+        "noRules": "لم يتم وضع أي قواعد",
         "rules": "قواعد المجموعة:\n{rules}",
-        "error": "حدث خطأ"
+        "error": "حدث خطأ ما"
     }
 }
 
@@ -128,4 +128,4 @@ export default {
     config,
     langData,
     onCall
-}
+        }
