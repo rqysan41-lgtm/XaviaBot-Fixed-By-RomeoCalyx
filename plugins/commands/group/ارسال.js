@@ -1,8 +1,8 @@
 const config = {
-    name: "resend",
+    name: "ارسال", // بدل resend
     permissions: [1, 2],
-    description: "Turn on/off resend message",
-    usage: "[on/off]",
+    description: "تفعيل/إيقاف إعادة إرسال الرسائل", // بدل Turn on/off resend message
+    usage: "[تشغيل/إيقاف]", // بدل [on/off]
     cooldown: 5,
     credits: "XaviaTeam"
 }
@@ -23,11 +23,11 @@ const langData = {
         "error": "Đã xảy ra lỗi, vui lòng thử lại sau."
     },
     "ar_SY": {
-        "resend.on": "تم تشغيل إعادة الإرسال.",
+        "resend.on": "تم تفعيل إعادة الإرسال.",
         "resend.off": "تم إيقاف إعادة الإرسال.",
-        "resend.alreadyOn": "إعادة الإرسال قيد التشغيل بالفعل.",
-        "resend.alreadyOff": "تم إيقاف إعادة الإرسال بالفعل.",
-        "error": "لقد حدث خطأ، رجاء أعد المحاولة لاحقا."
+        "resend.alreadyOn": "إعادة الإرسال مفعلة بالفعل.",
+        "resend.alreadyOff": "تم إيقاف إعادة الإرسال مسبقاً.",
+        "error": "حدث خطأ، يرجى المحاولة لاحقاً."
     }
 }
 
@@ -53,7 +53,7 @@ async function onCall({ message, args, getLang }) {
     const { threadID, reply } = message;
     let option = args[0]?.toLowerCase();
     try {
-        option = option == "on" ? true : option == "off" ? false : null;
+        option = option == "تشغيل" || option == "on" ? true : option == "إيقاف" || option == "off" ? false : null;
         option = await changeConfig(threadID, option);
 
         reply(getLang(option ? "resend.on" : "resend.off"));
@@ -70,4 +70,4 @@ export default {
     config,
     langData,
     onCall
-}
+                         }
