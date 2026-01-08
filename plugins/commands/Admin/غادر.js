@@ -1,9 +1,9 @@
 const config = {
-    name: "out",
-    aliases: ["leave"],
+    name: "غادر", // بدل out
+    aliases: ["غادر", "leave"],
     description:
-        "Leave the group/all groups, please note that the out all will not include the message request/spam group",
-    usage: "[groupID/all]",
+        "مغادرة المجموعة/جميع المجموعات، مع ملاحظة أن خيار المغادرة للجميع لن يشمل مجموعات الرسائل المطلوبة أو سبام", // بدل Leave the group/all groups...
+    usage: "[معرف_المجموعة/الكل]", // بدل [groupID/all]
     cooldown: 5,
     permissions: [2],
     credits: "XaviaTeam",
@@ -32,14 +32,14 @@ const langData = {
         error: "An error has occurred, please try again later.",
     },
     ar_SY: {
-        noThreadToOut: "لا توجد مجموعة لتغادر.",
+        noThreadToOut: "لا توجد مجموعة لمغادرتها.",
         invalidThreadIDs: "معرفات المجموعة غير صالحة.",
         confirm: "تفاعل ب 👍 للتأكيد.",
-        moderator: "مشرف الروبوت",
-        out: "⚠️ انتبه⚠️\n\nأمر البوت بمغادرة المجموعة!\nاتصال {authorName} لمزيد من التفاصيل.",
-        successOut: "غادر {successCount} المجموعات.",
+        moderator: "مشرف البوت",
+        out: "⚠️ انتبه ⚠️\n\nأمر البوت بمغادرة المجموعة!\nاتصل بـ {authorName} لمزيد من التفاصيل.",
+        successOut: "غادر {successCount} مجموعات.",
         failOut: "غير قادر على مغادرة المجموعة:\n{fail}",
-        error: "حصل خطأ. الرجاء المحاوله مرة اخرى.",
+        error: "حدث خطأ، يرجى المحاولة مرة أخرى.",
     },
 };
 
@@ -117,7 +117,7 @@ async function onCall({ message, args, getLang }) {
         const input = args[0]?.toLowerCase();
         const threadIDs = [];
 
-        if (input == "all") {
+        if (input == "الكل" || input == "all") {
             const threadList = (
                 (await global.api.getThreadList(100, null, ["INBOX"])) || []
             ).filter(
