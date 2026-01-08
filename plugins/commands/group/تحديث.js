@@ -1,8 +1,9 @@
 const _12HOURS = 12 * 60 * 60 * 1000;
+
 const config = {
-    name: "refresh",
+    name: "تحديث", // بدل refresh
     aliases: ["rfs"],
-    description: "Refresh thread data",
+    description: "تحديث بيانات المجموعة", // بدل Refresh thread data
     permissions: [1, 2],
     cooldown: _12HOURS
 }
@@ -26,7 +27,7 @@ async function onCall({ message, getLang }) {
     if (!message.isGroup) return;
     try {
         let result = await global.controllers.Threads.getInfoAPI(message.threadID);
-        if (result === null) return message.reply(getLang("error"));
+        if (result === null) return message.reply(getLang("failed"));
         else return message.reply(getLang("success"));
     } catch (e) {
         console.error(e)
@@ -38,4 +39,4 @@ export default {
     config,
     langData,
     onCall
-}
+            }
