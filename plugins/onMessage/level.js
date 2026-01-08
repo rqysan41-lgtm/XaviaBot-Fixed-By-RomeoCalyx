@@ -15,6 +15,9 @@ const langData = {
     vi_VN: {
         levelup: "{name}, bạn đã lên cấp {level}!",
     },
+    ar_SY: {
+        levelup: "{name}، لقد تقدمت إلى المستوى {level}!",
+    },
 };
 
 /** @type {TOnCallOnMessage} */
@@ -61,12 +64,10 @@ async function onCall({ message, getLang, data, xDB }) {
 
         const memberIndex = threadInfo.members.findIndex((member) => member.userID == senderID);
         if (memberIndex !== -1) {
-            if (memberIndex !== -1) {
-                if (!global.utils.isAcceptableNumber(threadInfo.members[memberIndex].exp))
-                    threadInfo.members[memberIndex].exp = 0;
+            if (!global.utils.isAcceptableNumber(threadInfo.members[memberIndex].exp))
+                threadInfo.members[memberIndex].exp = 0;
 
-                threadInfo.members[memberIndex].exp += 1;
-            }
+            threadInfo.members[memberIndex].exp += 1;
         } else {
             threadInfo.members.push({
                 userID: senderID,
