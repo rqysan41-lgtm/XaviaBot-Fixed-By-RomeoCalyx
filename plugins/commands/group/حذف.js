@@ -1,5 +1,5 @@
 const config = {
-    name: "unsend",
+    name: "حذف",
     aliases: ["gỡ"],
     description: "Unsend bot's message",
     usage: "[reply/on/off]",
@@ -22,6 +22,7 @@ const langData = {
         "notAllowedToTurnOff": "Bạn không có đủ quyền hạn để tắt chức năng này",
         "error": "Đã có lỗi xảy ra"
     },
+
     "en_US": {
         "dataNotReady": "The group's data is not ready",
         "notReply": "You must reply to the bot's message",
@@ -35,18 +36,20 @@ const langData = {
         "notAllowedToTurnOff": "You don't have enough permissions to turn off this feature",
         "error": "An error has occurred"
     },
+
+    // ====== الردود العربية فقط ======
     "ar_SY": {
-        "dataNotReady": "بيانات المجموعة غير جاهزة",
-        "notReply": "يجب عليك الرد على رسالة الروبوت",
-        "notBotMessage": "الرسالة التي ترد عليها ليست من الروبوت",
-        "notAllowed": "هذه المجموعة غير مسموح لها بإلغاء إرسال رسالة الروبوت",
-        "alreadyOn": "ميزة رسالة إلغاء إرسال الروبوت قيد التشغيل بالفعل",
-        "on": "تم تشغيل ميزة إلغاء إرسال رسالة الروبوت",
-        "alreadyOff": "ميزة رسالة إلغاء إرسال البوت متوقفة بالفعل",
-        "off": "تم إيقاف تشغيل ميزة إلغاء إرسال رسالة الروبوت",
-        "notAllowedToTurnOn": "ليس لديك أذونات كافية لتشغيل هذه الميزة",
-        "notAllowedToTurnOff": "ليس لديك صلاحيات كافية لإيقاف تشغيل هذه الميزة",
-        "error": "حدث خطأ"
+        "dataNotReady": "بيانات المجموعة غير جاهزة حالياً",
+        "notReply": "لازم ترد على رسالة البوت أولاً",
+        "notBotMessage": "الرسالة التي رددت عليها ليست من البوت",
+        "notAllowed": "هذه المجموعة لا تسمح بحذف رسائل البوت",
+        "alreadyOn": "ميزة حذف رسائل البوت مفعّلة بالفعل",
+        "on": "تم تفعيل ميزة حذف رسائل البوت ✅",
+        "alreadyOff": "ميزة حذف رسائل البوت متوقفة بالفعل",
+        "off": "تم إيقاف ميزة حذف رسائل البوت ❌",
+        "notAllowedToTurnOn": "ما عندك الصلاحيات الكافية لتفعيل هذه الميزة",
+        "notAllowedToTurnOff": "ما عندك الصلاحيات الكافية لإيقاف هذه الميزة",
+        "error": "حصل خطأ غير متوقع"
     }
 }
 
@@ -100,4 +103,4 @@ export default {
     config,
     langData,
     onCall
-}
+        }
