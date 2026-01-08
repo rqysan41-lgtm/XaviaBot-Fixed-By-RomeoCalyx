@@ -1,8 +1,8 @@
 const config = {
     aliases: ["pf", "setprefix", "setpf"],
     permissions: [1, 2],
-    description: "Set prefix for group",
-    usage: "<prefix>",
+    description: "تعيين البادئة للمجموعة", // بدل Set prefix for group
+    usage: "<البادئة>", // بدل <prefix>
     cooldown: 5,
     credits: "XaviaTeam",
 };
@@ -22,9 +22,9 @@ const langData = {
         "notGroup": "Lệnh này chỉ hoạt động trong nhóm",
         "threadDataNotExists": "Dữ liệu nhóm không tồn tại",
     },
-    "ar_VN": {
-        "prefix.get": "بادئة افتراضية: {default}\nالبادئة الحالية: {current}",
-        "prefix.set": "تم تعيين البادئة على {newPrefix}",
+    "ar_SY": {
+        "prefix.get": "البادئة الافتراضية: {default}\nالبادئة الحالية: {current}",
+        "prefix.set": "تم تعيين البادئة إلى {newPrefix}",
         "prefix.tooLong": "يجب أن تكون البادئة أقل من 5 أحرف",
         "notGroup": "هذا الأمر يعمل فقط في المجموعة",
         "threadDataNotExists": "بيانات المجموعة غير موجودة",
