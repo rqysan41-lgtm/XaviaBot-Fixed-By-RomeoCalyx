@@ -1,5 +1,5 @@
 const config = {
-    name: "wallpaper",
+    name: "جدران",
     aliases: ["anhnen", "wp"],
     credits: "XaviaTeam"
 }
@@ -14,7 +14,7 @@ function onCall({ message }) {
                     attachment: imgStream
                 });
             } catch {
-                message.reply("Error!");
+                message.reply("خطاء !");
             }
         })
         .catch(_ => message.reply("Error!"));
