@@ -1,5 +1,5 @@
 const config = {
-    name: "mods",
+    name: "مشرف",
     aliases: ["moderators"],
     version: "1.0.1",
     description: "List, Add or remove moderators",
@@ -7,27 +7,7 @@ const config = {
     cooldown: 5
 }
 
-const langData = {
-    "en_US": {
-        "notAbsolute": "You are not an absolute moderator.",
-        "alreadyModerator": "This user is already a moderator.",
-        "notModerator": "This user is not a moderator.",
-        "missingTarget": "Please mention or reply someone.",
-        "add.success": "Added to moderator list:\n{added}",
-        "remove.success": "Removed from moderator list:\n{removed}",
-        "list": "Moderators:\n{moderators}",
-        "error": "Error: {error}"
-    },
-    "vi_VN": {
-        "notAbsolute": "Bạn không phải là quản trị viên tuyệt đối.",
-        "alreadyModerator": "Người dùng này đã là quản trị viên.",
-        "notModerator": "Người dùng này không phải là quản trị viên.",
-        "missingTarget": "Vui lòng nhắc đến hoặc trả lời một người.",
-        "add.success": "Đã thêm vào danh sách quản trị viên:\n{added}",
-        "remove.success": "Đã xóa khỏi danh sách quản trị viên:\n{removed}",
-        "list": "Quản trị viên:\n{moderators}",
-        "error": "Lỗi: {error}"
-    },
+const langData =
     "ar_SY": {
         "notAbsolute": "أنت لست المشرف المطلق.",
         "alreadyModerator": "هذا المستخدم هو بالفعل مسؤول.",
