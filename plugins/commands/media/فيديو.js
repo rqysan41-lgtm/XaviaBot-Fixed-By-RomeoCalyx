@@ -5,7 +5,7 @@ import { statSync } from "fs";
 const _48MB = 48 * 1024 * 1024;
 
 const config = {
-    name: "video",
+    name: "فيديو",
     aliases: ['play', 'yt2mp4'],
     version: "1.0.3",
     description: "Play a video from youtube",
@@ -17,23 +17,7 @@ const config = {
     }
 }
 
-const langData = {
-    "en_US": {
-        "video.missingArguement": "Please provide keyword or an url",
-        "video.noResult": "No result found",
-        "video.invalidUrl": "Invalid url",
-        "video.invaldIndex": "Invalid index",
-        "video.tooLarge": "Video is too large, max size is 48MB",
-        "video.error": "An error occured"
-    },
-    "vi_VN": {
-        "video.missingArguement": "Vui lòng cung cấp từ khóa hoặc một url",
-        "video.noResult": "Không tìm thấy kết quả",
-        "video.invalidUrl": "Url không hợp lệ",
-        "video.invaldIndex": "Số thứ tự không hợp lệ",
-        "video.tooLarge": "Video quá lớn, tối đa 48MB",
-        "video.error": "Đã xảy ra lỗi"
-    },
+const langData = { 
     "ar_SY": {
         "video.missingArguement": "يرجى تقديم كلمة رئيسية أو عنوان الرابط",
         "video.noResult": "لم يتم العثور على نتائج",
