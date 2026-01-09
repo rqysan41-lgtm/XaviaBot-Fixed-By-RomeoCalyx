@@ -10,8 +10,8 @@ function onCall({ message }) {
             try {
                 let imgStream = await global.getStream(res.data.url);
                 message.reply({
-                    body: res.data.url,
-                    attachment: imgStream
+                   " قم بادخال عنوان.,
+                    : 
                 });
             } catch {
                 message.reply("خطاء !");
