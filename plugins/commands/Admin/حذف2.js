@@ -1,5 +1,5 @@
 const config = {
-    name: "delmsg",
+    name: "حذف2",
     aliases: ["deletemsg", "delmessage", "deletemessage"],
     description: "delete group message",
     usage: "[all]",
@@ -9,27 +9,7 @@ const config = {
     isAbsolute: true
 }
 
-const langData = {
-    "vi_VN": {
-        "confirmDeleteThis": "React 👍 để xác nhận xóa toàn bộ tin nhắn trong nhóm này.",
-        "noThread": "Không có nhóm nào để xóa tin nhắn.",
-        "confirmDeleteAll": "React 👍 để xác nhận xóa toàn bộ tin nhắn của toàn bộ các nhóm (không bao gồm nhóm hiện tại).",
-        "chooseThread": "=== INBOX ===\n\n{INBOX}\n\n=== PENDING ===\n\n{PENDING}\n\n=== SPAM ===\n\n{SPAM}\n\nNhập số thứ tự của nhóm để xóa tin nhắn (cách nhau bởi dấu cách).\nHoặc nhập all để xóa tin nhắn của tất cả các nhóm (không bao gồm nhóm hiện tại).",
-        "invalidIndexes": "Số thứ tự không hợp lệ.",
-        "confirmDelete": "React 👍 để xác nhận xóa toàn bộ tin nhắn của nhóm có ID sau:\n{choosenThreadID}",
-        "successDelete": "Đã xóa thành công!",
-        "error": "Đã có lỗi xảy ra, vui lòng thử lại sau."
-    },
-    "en_US": {
-        "confirmDeleteThis": "React 👍 to confirm delete all messages in this group.",
-        "noThread": "No group to delete messages.",
-        "confirmDeleteAll": "React 👍 to confirm delete all messages of all groups (except current group).",
-        "chooseThread": "=== INBOX ===\n\n{INBOX}\n\n=== PENDING ===\n\n{PENDING}\n\n=== SPAM ===\n\n{SPAM}\n\nEnter the index of groups to delete messages (separated by spaces).\nOr enter all to delete messages of all groups (except current group).",
-        "invalidIndexes": "Invalid indexes.",
-        "confirmDelete": "React 👍 to confirm delete all messages of the group with the following ID:\n{choosenThreadID}",
-        "successDelete": "Deleted successfully!",
-        "error": "An error occurred, please try again later."
-    },
+const langData = 
     "ar_SY": {
         "confirmDeleteThis": "تفاعل ب 👍 لتأكيد حذف جميع الرسائل في هذه المجموعة.",
         "noThread": "لا توجد مجموعة لحذف الرسائل.",
