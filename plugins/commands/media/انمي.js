@@ -1,5 +1,5 @@
 const config = {
-    name: "anime",
+    name: "انمي",
     description: "anime images",
     usage: "[category]",
     cooldown: 3,
@@ -7,15 +7,7 @@ const config = {
     credits: "XaviaTeam"
 }
 
-const langData = {
-    "en_US": {
-        "invalidCategory": "Invalid, available catagories:\n{categories}",
-        "error": "Error, try again later."
-    },
-    "vi_VN": {
-        "invalidCategory": "Không hợp lệ, các danh mục hiện có:\n{categories}",
-        "error": "Đã có lỗi xảy ra..."
-    },
+const langData = 
     "ar_SY": {
         "invalidCategory": "الفئات المتاحة غير صالحة:\n{categories}",
         "error": "خطأ ، حاول مرة أخرى في وقت لاحق..."
