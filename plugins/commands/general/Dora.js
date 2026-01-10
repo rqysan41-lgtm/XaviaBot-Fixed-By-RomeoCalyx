@@ -1,48 +1,50 @@
-module.exports.config = {
-  name: "دورا",
+export const config = {
+  name: "ويسكي",
+  permissions: [0],
+  cooldown: 3,
+  credits: "محمد",
+  extra: {
+    hide: false,
+    usage: "ويسكي [سؤالك]"
+  },
   aliases: ["ai", "gpt"],
-  version: "1.0.0",
-  author: "محمد",
-  role: 0,
-  description: "ذكاء اصطناعي دردشة",
-  usage: "دورا [سؤالك]",
-  cooldowns: 0
+  description: "ذكاء اصطناعي"
 };
 
-const axios = require("axios");
-
-// تخزين المحادثات
 const conversations = new Map();
 
-module.exports.run = async function ({ api, event, args }) {
-  const { threadID, senderID } = event;
+export async function onCall({ message, args, getLang }) {
+  const axios = (await import("axios")).default;
+  const userId = message.senderID;
   const question = args.join(" ").trim();
-
-  // أمر مسح المحادثة
+  
   if (question === "مسح" || question === "reset") {
-    conversations.delete(senderID);
-    return api.sendMessage(
-      "◈ ──『 ❀ دورا ❀ 』── ◈\n❁┊✅ تم مسح المحادثة\n◈ ──────────── ◈",
-      threadID
-    );
+    conversations.delete(userId);
+    return message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊✅ تم مسح المحادثة\n◈ ──────────── ◈");
   }
-
+  
   if (!question) {
-    return api.sendMessage(
-      "◈ ──『 ❀ دورا ❀ 』── ◈\n❁┊⚠️ اكتب سؤالك\n◈ ──────────── ◈",
-      threadID
-    );
+    return message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊⚠️ اكتب سؤالك\n◈ ──────────── ◈");
   }
 
   try {
-    if (!conversations.has(senderID)) conversations.set(senderID, []);
-    const history = conversations.get(senderID);
-
-    history.push({ role: "user", content: question });
-    if (history.length > 20) history.splice(0, history.length - 20);
+    if (!conversations.has(userId)) {
+      conversations.set(userId, []);
+    }
+    
+    const history = conversations.get(userId);
+    
+    history.push({
+      role: "user",
+      content: question
+    });
+    
+    if (history.length > 20) {
+      history.splice(0, history.length - 20);
+    }
 
     const boundary = "----WebKitFormBoundary" + Math.random().toString(36).substring(2);
-
+    
     let formData = "";
     formData += `--${boundary}\r\n`;
     formData += `Content-Disposition: form-data; name="chat_style"\r\n\r\nchat\r\n`;
@@ -51,10 +53,12 @@ module.exports.run = async function ({ api, event, args }) {
     formData += `--${boundary}\r\n`;
     formData += `Content-Disposition: form-data; name="model"\r\n\r\nstandard\r\n`;
     formData += `--${boundary}\r\n`;
+    formData += `Content-Disposition: form-data; name="hacker_is_stinky"\r\n\r\nvery_stinky\r\n`;
+    formData += `--${boundary}\r\n`;
     formData += `Content-Disposition: form-data; name="enabled_tools"\r\n\r\n[]\r\n`;
     formData += `--${boundary}--\r\n`;
 
-    const res = await axios({
+    const response = await axios({
       method: "POST",
       url: "https://api.deepai.org/hacking_is_a_serious_crime",
       headers: {
@@ -65,64 +69,73 @@ module.exports.run = async function ({ api, event, args }) {
       data: formData
     });
 
-    let reply = "لم أستطع فهم الرد.";
-
-    if (res.data) {
-      if (typeof res.data === "string") reply = res.data;
-      else if (res.data.output) reply = res.data.output;
-      else if (res.data.text) reply = res.data.text;
+    let reply = "";
+    
+    if (response.data) {
+      if (typeof response.data === "string") {
+        reply = response.data;
+      } else if (response.data.output) {
+        reply = response.data.output;
+      } else if (response.data.text) {
+        reply = response.data.text;
+      }
     }
 
     reply = reply
       .replace(/\\n/g, "\n")
+      .replace(/\\u0021/g, "!")
       .replace(/\\"/g, '"')
       .trim();
+    
+    if (reply.length > 2000) {
+      reply = reply.substring(0, 1997) + "...";
+    }
 
-    if (reply.length > 2000) reply = reply.slice(0, 1997) + "...";
+    history.push({
+      role: "assistant",
+      content: reply
+    });
 
-    history.push({ role: "assistant", content: reply });
-
-    api.sendMessage(
-      `◈ ──『 ❀ دورا ❀ 』── ◈\n❁┊🤖 الرد:\n\n${reply}\n\n◈ ──────────── ◈`,
-      threadID,
-      (err, info) => {
-        if (!err) {
-          global.client.handleReply.push({
-            name: "دورا",
-            messageID: info.messageID,
-            author: senderID
-          });
+    const sent = await message.reply(`◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊🤖 الرد:\n\n${reply}\n\n◈ ──────────── ◈`);
+    
+    if (sent && sent.messageID) {
+      sent.addReplyEvent({
+        callback: async ({ message: replyMessage }) => {
+          await handleContinue(replyMessage, userId);
         }
-      }
-    );
+      }, 300000); // 5 دقائق
+    }
 
-  } catch (e) {
-    console.log("DORA ERROR:", e.message);
-    api.sendMessage(
-      "◈ ──『 ❀ دورا ❀ 』── ◈\n❁┊❌ حدث خطأ أثناء المعالجة\n◈ ──────────── ◈",
-      threadID
-    );
+  } catch (error) {
+    console.error("خطأ:", error.message);
+    message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊❌ حدث خطأ\n◈ ──────────── ◈");
   }
-};
+}
 
-// الرد المتواصل
-module.exports.handleReply = async function ({ api, event, handleReply }) {
-  if (event.senderID !== handleReply.author) return;
-
-  const question = event.body?.trim();
+async function handleContinue(message, userId) {
+  const axios = (await import("axios")).default;
+  const question = message.body.trim();
+  
   if (!question) return;
 
   try {
-    if (!conversations.has(event.senderID))
-      conversations.set(event.senderID, []);
-
-    const history = conversations.get(event.senderID);
-
-    history.push({ role: "user", content: question });
-    if (history.length > 20) history.splice(0, history.length - 20);
+    if (!conversations.has(userId)) {
+      conversations.set(userId, []);
+    }
+    
+    const history = conversations.get(userId);
+    
+    history.push({
+      role: "user",
+      content: question
+    });
+    
+    if (history.length > 20) {
+      history.splice(0, history.length - 20);
+    }
 
     const boundary = "----WebKitFormBoundary" + Math.random().toString(36).substring(2);
-
+    
     let formData = "";
     formData += `--${boundary}\r\n`;
     formData += `Content-Disposition: form-data; name="chat_style"\r\n\r\nchat\r\n`;
@@ -131,10 +144,12 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
     formData += `--${boundary}\r\n`;
     formData += `Content-Disposition: form-data; name="model"\r\n\r\nstandard\r\n`;
     formData += `--${boundary}\r\n`;
+    formData += `Content-Disposition: form-data; name="hacker_is_stinky"\r\n\r\nvery_stinky\r\n`;
+    formData += `--${boundary}\r\n`;
     formData += `Content-Disposition: form-data; name="enabled_tools"\r\n\r\n[]\r\n`;
     formData += `--${boundary}--\r\n`;
 
-    const res = await axios({
+    const response = await axios({
       method: "POST",
       url: "https://api.deepai.org/hacking_is_a_serious_crime",
       headers: {
@@ -145,42 +160,45 @@ module.exports.handleReply = async function ({ api, event, handleReply }) {
       data: formData
     });
 
-    let reply = "لم أستطع فهم الرد.";
-
-    if (res.data) {
-      if (typeof res.data === "string") reply = res.data;
-      else if (res.data.output) reply = res.data.output;
-      else if (res.data.text) reply = res.data.text;
+    let reply = "";
+    
+    if (response.data) {
+      if (typeof response.data === "string") {
+        reply = response.data;
+      } else if (response.data.output) {
+        reply = response.data.output;
+      } else if (response.data.text) {
+        reply = response.data.text;
+      }
     }
 
     reply = reply
       .replace(/\\n/g, "\n")
+      .replace(/\\u0021/g, "!")
       .replace(/\\"/g, '"')
       .trim();
+    
+    if (reply.length > 2000) {
+      reply = reply.substring(0, 1997) + "...";
+    }
 
-    if (reply.length > 2000) reply = reply.slice(0, 1997) + "...";
+    history.push({
+      role: "assistant",
+      content: reply
+    });
 
-    history.push({ role: "assistant", content: reply });
-
-    api.sendMessage(
-      `◈ ──『 ❀ دورا ❀ 』── ◈\n❁┊🤖 الرد:\n\n${reply}\n\n◈ ──────────── ◈`,
-      event.threadID,
-      (err, info) => {
-        if (!err) {
-          global.client.handleReply.push({
-            name: "دورا",
-            messageID: info.messageID,
-            author: event.senderID
-          });
+    const sent = await message.reply(`◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊🤖 الرد:\n\n${reply}\n\n◈ ──────────── ◈`);
+    
+    if (sent && sent.messageID) {
+      sent.addReplyEvent({
+        callback: async ({ message: replyMessage }) => {
+          await handleContinue(replyMessage, userId);
         }
-      }
-    );
+      }, 300000); // 5 دقائق
+    }
 
-  } catch (e) {
-    console.log("DORA REPLY ERROR:", e.message);
-    api.sendMessage(
-      "◈ ──『 ❀ دورا ❀ 』── ◈\n❁┊❌ حدث خطأ أثناء المعالجة\n◈ ──────────── ◈",
-      event.threadID
-    );
+  } catch (error) {
+    console.error("خطأ:", error.message);
+    message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊❌ حدث خطأ\n◈ ──────────── ◈");
   }
-};
+                         }
