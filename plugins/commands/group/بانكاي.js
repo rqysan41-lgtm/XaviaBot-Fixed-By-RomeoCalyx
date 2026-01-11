@@ -30,15 +30,18 @@ function kick(userID, threadID) {
     });
 }
 
-// دالة إرسال صورة قبل الطرد
-async function sendKickImage(threadID) {
+// دالة إرسال صورة الطرد مع صورة العضو
+async function sendKickImageWithUser(threadID, userID) {
     return new Promise((resolve, reject) => {
+        const userAvatarURL = `https://graph.facebook.com/${userID}/picture?type=large`;
+
         global.api.sendMessage(
             {
                 body: "🚫 تم اتخاذ قرار الطرد...",
-                attachment: global.utils.getStreamFromURL(
-                    "https://i.imgur.com/XXXXX.jpg" // ← عدّل الرابط لاحقاً
-                ),
+                attachment: [
+                    global.utils.getStreamFromURL(userAvatarURL),
+                    global.utils.getStreamFromURL("https://i.imgur.com/XXXXX.jpg") // عدّل الصورة العامة هنا
+                ],
             },
             threadID,
             (err) => {
@@ -56,41 +59,36 @@ async function onCall({ message, getLang, data }) {
     const { threadID, mentions, senderID, messageReply, type, reply } = message;
 
     try {
-        if (Object.keys(mentions).length === 0 && type !== "message_reply")
-            return reply(getLang("missingTarget"));
-
         const threadInfo = data.thread.info;
-        const { adminIDs } = threadInfo;
-
-        // تحديد أعضاء الطرد مع استثناء البوت والمرسل
-        let targetIDs =
-            Object.keys(mentions).length > 0
-                ? Object.keys(mentions)
-                : [messageReply.senderID];
-
-        targetIDs = targetIDs.filter(
-            (id) => id !== global.botID && id !== senderID
-        );
+        const adminIDs = threadInfo.adminIDs.map(a => a.id || a);
 
         if (!adminIDs.includes(global.botID))
             return reply(getLang("botNotAdmin"));
 
-        if (targetIDs.length === 0)
-            return reply("لا يوجد أعضاء صالحين للطرد");
+        let targetIDs =
+            Object.keys(mentions).length > 0
+                ? Object.keys(mentions)
+                : type === "message_reply"
+                ? [messageReply.senderID]
+                : [];
 
-        // 🔔 إرسال صورة مرة واحدة قبل الطرد (لو فشلت ما توقف الطرد)
-        try {
-            await sendKickImage(threadID);
-            await global.utils.sleep(800);
-        } catch (e) {
-            console.error("فشل إرسال صورة الطرد، سيتم الطرد بدون صورة");
-        }
+        targetIDs = targetIDs.filter(id => id !== global.botID && id !== senderID);
 
-        let success = 0,
-            fail = 0;
+        if (targetIDs.length === 0) return reply("لا يوجد أعضاء صالحين للطرد");
+
+        let success = 0;
+        let fail = 0;
 
         for (const targetID of targetIDs) {
             try {
+                // حاول إرسال صورة الطرد مع صورة العضو
+                try {
+                    await sendKickImageWithUser(threadID, targetID);
+                    await global.utils.sleep(800);
+                } catch (e) {
+                    console.error("فشل إرسال صورة الطرد، سيتم الطرد بدون صورة");
+                }
+
                 await kick(targetID, threadID);
                 await global.utils.sleep(500);
                 success++;
@@ -100,8 +98,8 @@ async function onCall({ message, getLang, data }) {
             }
         }
 
-        if (success > 0) await reply(getLang("kickResult", { success }));
-        if (fail > 0) await reply(getLang("kickFail", { fail }));
+        if (success > 0) reply(getLang("kickResult").replace("{success}", success));
+        if (fail > 0) reply(getLang("kickFail").replace("{fail}", fail));
     } catch (e) {
         console.error("خطأ عام في الطرد:", e);
         reply(getLang("error"));
