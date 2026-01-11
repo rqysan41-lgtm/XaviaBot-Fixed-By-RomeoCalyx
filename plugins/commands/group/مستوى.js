@@ -1,5 +1,5 @@
 const config = {
-    name: "levelup",
+    name: "مستوى",
     aliases: ["lvlup"],
     permissions: [1, 2],
     description: "Turn on/off level up notification",
