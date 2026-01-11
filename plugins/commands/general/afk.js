@@ -1,5 +1,5 @@
 const config = {
-    credits: "XaviaTeam"
+    credits: "ويسكي "
 }
 
 const langData = {
