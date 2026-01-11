@@ -9,11 +9,11 @@ const config = {
 
 const langData = {
     ar_SY: {
-        missingTarget: "اعمل طاق لبني ادم  @-@",
-        botNotAdmin: "جيب ادمن اول  ʕ  •͡-•ʔ⁩",
-        botTarget: "قاعده في بيتكم'-'؟ ",
-        senderTarget: "لا يمكنك طرد نفسك من القروب ",
-        botAndSenderTarget: "يا مان داير تطرد اطرد نفسك براك ",
+        missingTarget: "يرجى منشن العضو أو الرد على رسالته لطرده",
+        botNotAdmin: "يجب أن يكون البوت مشرفاً ليتمكن من طرد الأعضاء",
+        botTarget: "لا يمكنك طرد البوت من القروب",
+        senderTarget: "لا يمكنك طرد نفسك من القروب",
+        botAndSenderTarget: "لا يمكنك طرد البوت ونفسك معاً",
         kickResult: "تم طرد {success} عضو بنجاح",
         kickFail: "فشل طرد {fail} عضو",
         error: "حصل خطأ، حاول مرة أخرى لاحقاً",
