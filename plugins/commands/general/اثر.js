@@ -1,10 +1,10 @@
 const config = {
-    name: "streak",
+    name: "اثر",
     description: "Day counting...",
     usage: "[start/set/relapse/stop]",
     cooldown: 5,
     permissions: [0, 1, 2],
-    credits: "XaviaTeam"
+    credits: "ويسكي "
 }
 
 const langData = {
