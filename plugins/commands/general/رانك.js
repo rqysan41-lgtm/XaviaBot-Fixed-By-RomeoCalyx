@@ -3,9 +3,9 @@ import { writeFileSync } from 'fs';
 import { join } from 'path';
 
 const config = {
-    description: 'Get your global/local rank',
+    description: 'Get your global/local رانك',
     usage: "[-g/-l] [@mention/reply]",
-    credits: "XaviaTeam",
+    credits: "ويسكي ",
     cooldown: 10
 }
 
