@@ -1,5 +1,5 @@
 const config = {
-    name: "maintain",
+    name: "صيانة",
     description: "on/off maintain mode",
     usage: "[on/off]",
     cooldown: 3,
