@@ -1,10 +1,10 @@
 const config = {
-    name: "weather",
+    name: "طقس",
     description: "Get weather info",
     usage: "[location]",
     cooldown: 3,
     permissions: [0, 1, 2],
-    credits: "xaviaTeam"
+    credits: "ويسكي "
 }
 
 const langData = {
