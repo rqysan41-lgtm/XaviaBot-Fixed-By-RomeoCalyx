@@ -9,7 +9,7 @@ const config = {
 
 const langData = {
     ar_SY: {
-        missingTarget: "اعمل طاق لعب عشان احشو  ʕ  •͡-•ʔ⁩",
+        missingTarget: "اعمل طاق لعب عشان احشو ☝⁩",
         botNotAdmin:" ارفع ادمن يا باطل ヽʕ⎚-⎚⌐ ʔノ",
         botTarget: "ليش داير تطرد البوت من القروب؟ :<?",
         senderTarget: "ليش داير تطرد نفسك من القروب؟ :v?",
