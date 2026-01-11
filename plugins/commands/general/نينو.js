@@ -1,11 +1,11 @@
 const config = {
-    name: "nino",
+    name: "نينو",
     version: "1.1.0",
     description: "talk with nino",
     usage: "[text]",
     cooldown: 3,
     permissions: [0, 1, 2],
-    credits: "XaviaTeam"
+    credits: "ويسكي "
 }
 
 const langData = {
