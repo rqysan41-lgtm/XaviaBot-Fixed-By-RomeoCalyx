@@ -1,9 +1,9 @@
 const config = {
-    name: "trans",
+    name: "عبر",
     aliases: ['translate', 'dich'],
     description: "Translate text to bot language.",
     usage: '[lang] [text]',
-    credits: 'XaviaTeam'
+    credits: 'ويسكي '
 }
 
 const langData = {
