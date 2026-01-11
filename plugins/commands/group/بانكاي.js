@@ -10,7 +10,7 @@ const config = {
 const langData = {
     ar_SY: {
         missingTarget: "اعمل طاق لعب عشان احشو ☝⁩",
-        botNotAdmin:" ارفع ادمن يا باطل ヽʕ⎚-⎚⌐ ʔノ",
+        botNotAdmin:" ارفع ادمن يا باطل'-'",
         botTarget: "ليش داير تطرد البوت من القروب؟ :<?",
         senderTarget: "ليش داير تطرد نفسك من القروب؟ :v?",
         botAndSenderTarget:
@@ -84,7 +84,7 @@ async function onCall({ message, getLang, data }) {
             await sendKickImage(threadID);
             await global.utils.sleep(800);
         } catch (e) {
-            console.error("الصور ما جات برضو بحشر ليك  ヽʕ⎚-⎚⌐ ʔノ");
+            console.error("الصور ما جات برضو بحشر ليك 🙂");
         }
 
         let success = 0,
