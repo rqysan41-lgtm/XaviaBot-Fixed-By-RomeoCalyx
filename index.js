@@ -1,5 +1,5 @@
 import { readFileSync, writeFileSync, existsSync, statSync } from "fs";
-import { spawn } from "child_process";
+import { spawn, execSync } from "child_process";
 import semver from "semver";
 import axios from "axios";
 
@@ -15,16 +15,22 @@ import {
 
 console.clear();
 
-// Node check for Replit (لا نلمس ملفات البوت)
-async function checkNode() {
+// Install newer node version on some old Repls
+function upNodeReplit() {
+    return new Promise((resolve) => {
+        execSync(
+            "npm i --save-dev node@16 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH"
+        );
+        resolve();
+    });
+}
+
+(async () => {
     if (process.version.slice(1).split(".")[0] < 16) {
         if (isReplit) {
             try {
                 logger.warn("Installing Node.js v16 for Repl.it...");
-                const { execSync } = await import("child_process");
-                execSync(
-                    "npm i --save-dev node@16 && npm config set prefix=$(pwd)/node_modules/node && export PATH=$(pwd)/node_modules/node/bin:$PATH"
-                );
+                await upNodeReplit();
                 if (process.version.slice(1).split(".")[0] < 16)
                     throw new Error("Failed to install Node.js v16.");
             } catch (err) {
@@ -37,13 +43,12 @@ async function checkNode() {
         );
         process.exit(0);
     }
-}
 
-// Glitch setup
-function checkGlitch() {
     if (isGlitch) {
         const WATCH_FILE = {
-            restart: { include: ["\\.json"] },
+            restart: {
+                include: ["\\.json"],
+            },
             throttle: 3000,
         };
 
@@ -56,18 +61,18 @@ function checkGlitch() {
                 process.cwd() + "/watch.json",
                 JSON.stringify(WATCH_FILE, null, 2)
             );
+            execSync("refresh");
         }
     }
-}
 
-// GitHub warning
-function checkGitHub() {
     if (isGitHub) {
         logger.warn("Running on GitHub is not recommended.");
     }
-}
+})();
 
-// Check updates
+// End
+
+// CHECK UPDATE
 async function checkUpdate() {
     logger.custom("Checking for updates...", "UPDATE");
     try {
@@ -76,7 +81,9 @@ async function checkUpdate() {
         );
 
         const { version } = res.data;
-        const currentVersion = JSON.parse(readFileSync("./package.json")).version;
+        const currentVersion = JSON.parse(
+            readFileSync("./package.json")
+        ).version;
         if (semver.lt(currentVersion, version)) {
             logger.warn(`New version available: ${version}`);
             logger.warn(`Current version: ${currentVersion}`);
@@ -88,37 +95,48 @@ async function checkUpdate() {
     }
 }
 
-// تشغيل البوت دائمًا بدون توقف
-async function startBot() {
-    await loadPlugins();
-    await checkUpdate();
+// Child handler
+const _1_MINUTE = 60000;
+let restartCount = 0;
 
+async function main() {
+    await checkUpdate();
+    await loadPlugins();
     const child = spawn(
         "node",
-        ["--trace-warnings", "--experimental-import-meta-resolve", "--expose-gc", "core/_build.js"],
-        { cwd: process.cwd(), stdio: "inherit", env: process.env }
+        [
+            "--trace-warnings",
+            "--experimental-import-meta-resolve",
+            "--expose-gc",
+            "core/_build.js",
+        ],
+        {
+            cwd: process.cwd(),
+            stdio: "inherit",
+            env: process.env,
+        }
     );
 
     child.on("close", async (code) => {
-        if (code !== 0) logger.error(`Bot exited with code ${code}`);
-        else logger.warn("Bot stopped normally.");
-
-        logger.warn("Restarting bot in 2 seconds...");
-        setTimeout(startBot, 2000); // إعادة التشغيل دائمًا
-    });
-
-    child.on("error", (err) => {
-        logger.error("Failed to start bot:", err);
-        setTimeout(startBot, 2000);
+        handleRestartCount();
+        if (code !== 0 && restartCount < 5) {
+            console.log();
+            logger.error(`An error occurred with exit code ${code}`);
+            logger.warn("Restarting...");
+            await new Promise((resolve) => setTimeout(resolve, 2000));
+            main();
+        } else {
+            console.log();
+            logger.error("XaviaBot has stopped, press Ctrl + C to exit.");
+        }
     });
 }
 
-// Main
-(async () => {
-    await checkNode();
-    checkGlitch();
-    checkGitHub();
+function handleRestartCount() {
+    restartCount++;
+    setTimeout(() => {
+        restartCount--;
+    }, _1_MINUTE);
+}
 
-    logger.custom("Launcher started. Bot will run 24/7.", "BOOT");
-    startBot();
-})();
+main();
