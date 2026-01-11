@@ -1,5 +1,5 @@
 const config = {
-    name: "language",
+    name: "اللغه",
     aliases: ["lang"],
     description: "choose bot language for group",
     usage: "[lang/reset/list]",
