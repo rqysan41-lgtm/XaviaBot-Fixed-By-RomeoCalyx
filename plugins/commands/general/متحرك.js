@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const config = {
-    name: "getlink",
+    name: "متحرك",
     description: "getlink",
     usage: "[reply]",
     cooldown: 3,
