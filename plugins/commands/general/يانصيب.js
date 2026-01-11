@@ -1,12 +1,12 @@
 import { config as lotteryConfig } from "../../lottery.js";
 
 const config = {
-    name: "lottery",
+    name: "يانصيب",
     description: "¯_(ツ)_/¯",
     usage: "[info/bet] [number bet] [money]",
     cooldown: 5,
     permissions: [0, 1, 2],
-    credits: "XaviaTeam",
+    credits: "ويسكي ",
 };
 
 const langData = {
