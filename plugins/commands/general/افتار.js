@@ -1,11 +1,11 @@
 import { join } from 'path';
 
 const config = {
-    name: "avatar",
+    name: "افتار",
     aliases: ["avt", "profileImage"],
     description: "Get profile image of a user",
     usage: "<reply/tag/none>",
-    credits: "XaviaTeam"
+    credits: "ويسكي "
 }
 
 const langData = {
