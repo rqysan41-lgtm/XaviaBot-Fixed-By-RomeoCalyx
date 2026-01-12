@@ -1,5 +1,5 @@
 const config = {
-    name: "setmoney",
+    name: "اموال",
     aliases: ["setbalance", "setbal"],
     permissions: [2],
     description: "Set money of a user",
