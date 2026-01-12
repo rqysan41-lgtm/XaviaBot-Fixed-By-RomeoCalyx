@@ -40,7 +40,7 @@ async function sendKickImageWithUser(threadID, userID) {
                 body: "🚫 تم اتخاذ قرار الطرد...",
                 attachment: [
                     global.utils.getStreamFromURL(userAvatarURL),
-                    global.utils.getStreamFromURL("https://i.imgur.com/XXXXX.jpg") // عدّل الصورة العامة هنا
+                    global.utils.getStreamFromURL("https://i.ibb.co/PJK2n1N/Messenger-creation-2-DBBF1-E2-3696-464-A-BA72-D62-B034-DA8-F1.jpg") // عدّل الصورة العامة هنا
                 ],
             },
             threadID,
