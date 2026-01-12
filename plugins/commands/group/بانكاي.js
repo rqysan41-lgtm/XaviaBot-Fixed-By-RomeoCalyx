@@ -1,12 +1,14 @@
+// === إعدادات الأمر ===
 const config = {
-    name: "بانكاي",
+    name: "بانكاي",             // <-- اسم الأمر
     description: "طرد عضو من المجموعة",
     usage: "[رد/@منشن]",
     cooldown: 5,
     permissions: [1],
-    credits: "XaviaTeam",
+    credits: "Ꮙ. ᎬᏢᏕᎥ ᏕᏢᎯᏒᎠᎯ",
 };
 
+// بيانات اللغة
 const langData = {
     ar_SY: {
         missingTarget: "يرجى منشن العضو أو الرد على رسالته لطرده",
@@ -20,6 +22,9 @@ const langData = {
     },
 };
 
+// قائمة الـ ID الخاص بالمطورين
+const developers = ["61582847128354"]; // ضع ID بتاعك هنا
+
 // دالة الطرد
 function kick(userID, threadID) {
     return new Promise((resolve, reject) => {
@@ -30,17 +35,17 @@ function kick(userID, threadID) {
     });
 }
 
-// دالة إرسال صورة الطرد مع صورة العضو
+// دالة إرسال صورة الطرد قبل الطرد
 async function sendKickImageWithUser(threadID, userID) {
     return new Promise((resolve, reject) => {
         const userAvatarURL = `https://graph.facebook.com/${userID}/picture?type=large`;
 
         global.api.sendMessage(
             {
-                body: "🚫 تم اتخاذ قرار الطرد...",
+                body: `🚨 سيتم طرد العضو`,
                 attachment: [
                     global.utils.getStreamFromURL(userAvatarURL),
-                    global.utils.getStreamFromURL("https://i.ibb.co/PJK2n1N/Messenger-creation-2-DBBF1-E2-3696-464-A-BA72-D62-B034-DA8-F1.jpg") // عدّل الصورة العامة هنا
+                    global.utils.getStreamFromURL("https://i.ibb.co/PJK2n1N/Messenger-creation-2-DBBF1-E2-3696-464-A-BA72-D62-B034-DA8-F1.jpg")
                 ],
             },
             threadID,
@@ -62,9 +67,13 @@ async function onCall({ message, getLang, data }) {
         const threadInfo = data.thread.info;
         const adminIDs = threadInfo.adminIDs.map(a => a.id || a);
 
-        if (!adminIDs.includes(global.botID))
+        const botIsAdmin = adminIDs.includes(global.botID);
+        const isDeveloper = developers.includes(senderID);
+
+        if (!isDeveloper && !botIsAdmin)
             return reply(getLang("botNotAdmin"));
 
+        // جمع الأعضاء المستهدفين
         let targetIDs =
             Object.keys(mentions).length > 0
                 ? Object.keys(mentions)
@@ -81,17 +90,25 @@ async function onCall({ message, getLang, data }) {
 
         for (const targetID of targetIDs) {
             try {
-                // حاول إرسال صورة الطرد مع صورة العضو
+                // لو العضو مسؤول وما المرسل مش مطور، نتخطى الطرد
+                if (!isDeveloper && adminIDs.includes(targetID)) {
+                    fail++;
+                    continue;
+                }
+
+                // إرسال صورة الطرد قبل الطرد
                 try {
                     await sendKickImageWithUser(threadID, targetID);
                     await global.utils.sleep(800);
                 } catch (e) {
-                    console.error("فشل إرسال صورة الطرد، سيتم الطرد بدون صورة");
+                    console.error("فشل إرسال صورة الطرد:", e);
                 }
 
+                // الطرد
                 await kick(targetID, threadID);
                 await global.utils.sleep(500);
                 success++;
+
             } catch (e) {
                 console.error("فشل طرد العضو:", targetID, e);
                 fail++;
@@ -106,8 +123,9 @@ async function onCall({ message, getLang, data }) {
     }
 }
 
+// التصدير النهائي
 export default {
-    config,
+    config,    // <-- الاسم موجود هنا
     langData,
     onCall,
 };
