@@ -13,9 +13,21 @@ import {
     isGitHub,
 } from "./core/var/modules/environments.get.js";
 
+import express from "express";
+
 console.clear();
 
-// Install newer node version on some old Repls
+// ===== Render memory fix =====
+process.env.NODE_OPTIONS = "--max-old-space-size=512";
+
+// ===== Express server for UptimeRobot ping =====
+const app = express();
+app.get("/", (req, res) => res.send("Bot is alive 🚀"));
+app.listen(process.env.PORT || 3000, () => {
+    logger.custom("Express server running for UptimeRobot ping", "PING");
+});
+
+// ===== Install Node on old Repls =====
 function upNodeReplit() {
     return new Promise((resolve) => {
         execSync(
@@ -45,45 +57,29 @@ function upNodeReplit() {
     }
 
     if (isGlitch) {
-        const WATCH_FILE = {
-            restart: {
-                include: ["\\.json"],
-            },
-            throttle: 3000,
-        };
-
-        if (
-            !existsSync(process.cwd() + "/watch.json") ||
+        const WATCH_FILE = { restart: { include: ["\\.json"] }, throttle: 3000 };
+        if (!existsSync(process.cwd() + "/watch.json") ||
             !statSync(process.cwd() + "/watch.json").isFile()
         ) {
             logger.warn("Glitch environment detected. Creating watch.json...");
-            writeFileSync(
-                process.cwd() + "/watch.json",
-                JSON.stringify(WATCH_FILE, null, 2)
-            );
+            writeFileSync(process.cwd() + "/watch.json",
+                JSON.stringify(WATCH_FILE, null, 2));
             execSync("refresh");
         }
     }
 
-    if (isGitHub) {
-        logger.warn("Running on GitHub is not recommended.");
-    }
+    if (isGitHub) logger.warn("Running on GitHub is not recommended.");
 })();
 
-// End
-
-// CHECK UPDATE
+// ================= CHECK UPDATE =================
 async function checkUpdate() {
     logger.custom("Checking for updates...", "UPDATE");
     try {
         const res = await axios.get(
             "https://raw.githubusercontent.com/XaviaTeam/XaviaBot/main/package.json"
         );
-
         const { version } = res.data;
-        const currentVersion = JSON.parse(
-            readFileSync("./package.json")
-        ).version;
+        const currentVersion = JSON.parse(readFileSync("./package.json")).version;
         if (semver.lt(currentVersion, version)) {
             logger.warn(`New version available: ${version}`);
             logger.warn(`Current version: ${currentVersion}`);
@@ -95,19 +91,24 @@ async function checkUpdate() {
     }
 }
 
-// Child handler
+// ================= CHILD HANDLER =================
 const _1_MINUTE = 60000;
 let restartCount = 0;
+
+// حد الذاكرة للبوت
+const MAX_MEMORY_MB = 450;
 
 async function main() {
     await checkUpdate();
     await loadPlugins();
+
     const child = spawn(
         "node",
         [
             "--trace-warnings",
             "--experimental-import-meta-resolve",
             "--expose-gc",
+            "--max-old-space-size=512",
             "core/_build.js",
         ],
         {
@@ -119,11 +120,13 @@ async function main() {
 
     child.on("close", async (code) => {
         handleRestartCount();
-        if (code !== 0 && restartCount < 5) {
+
+        // إعادة تشغيل دائمة بدون حد
+        if (code !== 0) {
             console.log();
-            logger.error(`An error occurred with exit code ${code}`);
+            logger.error(`Process stopped with code ${code}`);
             logger.warn("Restarting...");
-            await new Promise((resolve) => setTimeout(resolve, 2000));
+            await new Promise((r) => setTimeout(r, 2000));
             main();
         } else {
             console.log();
@@ -134,9 +137,28 @@ async function main() {
 
 function handleRestartCount() {
     restartCount++;
-    setTimeout(() => {
-        restartCount--;
-    }, _1_MINUTE);
+    setTimeout(() => { restartCount--; }, _1_MINUTE);
 }
+
+// ================= MEMORY WATCHER =================
+setInterval(() => {
+    const used = process.memoryUsage().rss / 1024 / 1024;
+
+    if (used > MAX_MEMORY_MB) {
+        logger.warn(`High memory usage: ${used.toFixed(0)} MB, restarting...`);
+        process.exit(1);
+    }
+
+    if (global.gc) global.gc();
+}, 60 * 1000);
+
+// ================= ERROR SAFETY =================
+process.on("uncaughtException", (err) => {
+    logger.error("Uncaught Exception:", err);
+});
+
+process.on("unhandledRejection", (reason) => {
+    logger.error("Unhandled Rejection:", reason);
+});
 
 main();
