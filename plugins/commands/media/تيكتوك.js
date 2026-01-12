@@ -4,7 +4,7 @@ import { join } from 'path';
 const _48MB = 48 * 1024 * 1024;
 
 const config = {
-    name: "tikvideo",
+    name: "تيكتوك",
     aliases: ["tik", "tikdown", "tikdl"],
     version: "1.0.1",
     description: "Download video tiktok no watermark.",
