@@ -2,7 +2,7 @@ export const config = {
   name: "ساكورا",
   permissions: [0],
   cooldown: 3,
-  credits: "محمد",
+  credits: "Ꮙ. ᎬᏢᏕᎥ ᏕᏢᎯᏒᎠᎯ",
   extra: {
     hide: false,
     usage: "ساكورا [سؤالك]"
@@ -20,11 +20,11 @@ export async function onCall({ message, args, getLang }) {
   
   if (question === "مسح" || question === "reset") {
     conversations.delete(userId);
-    return message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n┊✅ تم مسح المحادثة\n");
+    return message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n✅ تم مسح المحادثة\n");
   }
   
   if (!question) {
-    return message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n┊يا عثل عايز شنو •-•؟ \n");
+    return message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\nيا عثل عايز شنو •-•؟ \n");
   }
 
   try {
@@ -108,7 +108,7 @@ export async function onCall({ message, args, getLang }) {
 
   } catch (error) {
     console.error("خطأ:", error.message);
-    message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n┊❌ حدث خطأ\n");
+    message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n❌ حدث خطأ\n");
   }
 }
 
@@ -187,7 +187,7 @@ async function handleContinue(message, userId) {
       content: reply
     });
 
-    const sent = await message.reply(`◈ 『 ❀ ساكورا ❀ 』 ◈\n┊:\n\n${reply}\n\n`);
+    const sent = await message.reply(`◈ 『 ❀ ساكورا ❀ 』 ◈\n:\n\n${reply}\n\n`);
     
     if (sent && sent.messageID) {
       sent.addReplyEvent({
@@ -199,6 +199,6 @@ async function handleContinue(message, userId) {
 
   } catch (error) {
     console.error("خطأ:", error.message);
-    message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n┊❌ حدث خطأ\n");
+    message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n❌ حدث خطأ\n");
   }
                          }
