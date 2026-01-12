@@ -1,11 +1,11 @@
 export const config = {
-  name: "ويسكي",
+  name: "ساكورا",
   permissions: [0],
   cooldown: 3,
   credits: "محمد",
   extra: {
     hide: false,
-    usage: "ويسكي [سؤالك]"
+    usage: "ساكورا [سؤالك]"
   },
   aliases: ["ai", "gpt"],
   description: "ذكاء اصطناعي"
@@ -20,11 +20,11 @@ export async function onCall({ message, args, getLang }) {
   
   if (question === "مسح" || question === "reset") {
     conversations.delete(userId);
-    return message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊✅ تم مسح المحادثة\n◈ ──────────── ◈");
+    return message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n❁┊✅ تم مسح المحادثة\n◈  ◈");
   }
   
   if (!question) {
-    return message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊⚠️ اكتب سؤالك\n◈ ──────────── ◈");
+    return message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n❁┊يا عثل عايز شنو •-•؟ \n◈  ◈");
   }
 
   try {
@@ -96,7 +96,7 @@ export async function onCall({ message, args, getLang }) {
       content: reply
     });
 
-    const sent = await message.reply(`◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊🤖 الرد:\n\n${reply}\n\n◈ ──────────── ◈`);
+    const sent = await message.reply(`◈  ❀ ساكورا ❀ ◈\n❁┊ الرد:\n\n${reply}\n\n◈ ──────────── ◈`);
     
     if (sent && sent.messageID) {
       sent.addReplyEvent({
@@ -108,7 +108,7 @@ export async function onCall({ message, args, getLang }) {
 
   } catch (error) {
     console.error("خطأ:", error.message);
-    message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊❌ حدث خطأ\n◈ ──────────── ◈");
+    message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n❁┊❌ حدث خطأ\n◈   ◈");
   }
 }
 
@@ -187,7 +187,7 @@ async function handleContinue(message, userId) {
       content: reply
     });
 
-    const sent = await message.reply(`◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊🤖 الرد:\n\n${reply}\n\n◈ ──────────── ◈`);
+    const sent = await message.reply(`◈ 『 ❀ ساكورا ❀ 』 ◈\n❁┊ الرد:\n\n${reply}\n\n◈  ◈`);
     
     if (sent && sent.messageID) {
       sent.addReplyEvent({
@@ -199,6 +199,6 @@ async function handleContinue(message, userId) {
 
   } catch (error) {
     console.error("خطأ:", error.message);
-    message.reply("◈ ──『 ❀ ويسكي ❀ 』── ◈\n❁┊❌ حدث خطأ\n◈ ──────────── ◈");
+    message.reply("◈ 『 ❀ ساكورا ❀ 』 ◈\n❁┊❌ حدث خطأ\n◈  ◈");
   }
                          }
