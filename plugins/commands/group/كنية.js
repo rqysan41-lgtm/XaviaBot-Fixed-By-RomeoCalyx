@@ -37,7 +37,7 @@ export default {
                 // تغيير اسم المرسل نفسه
                 await api.changeNickname(name, threadID, senderID);
                 return api.sendMessage(
-                    ` ${name}`,
+                    `✅ تم تغيير اسمك إلى: ${name}`,
                     threadID
                 );
             } else {
@@ -53,7 +53,7 @@ export default {
 
                 await api.changeNickname(cleanName, threadID, mentionID);
                 return api.sendMessage(
-                    ` ${mentions[mentionID]} إلى: ${cleanName}`,
+                    `✅ تم تغيير اسم ${mentions[mentionID]} إلى: ${cleanName}`,
                     threadID
                 );
             }
