@@ -89,8 +89,8 @@ async function onCall({ message, args, getLang, data, userPermissions }) {
             const targetMessageID = message.messageReply.messageID;
 
             return global.api.unsendMessage(targetMessageID, (e) => {
-                if (e) return message.react("❌");
-                message.react("✅");
+                if (e) return message.react("💠");
+                message.react("💠");
             });
         }
     } catch (err) {
