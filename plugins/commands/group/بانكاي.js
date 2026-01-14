@@ -1,29 +1,51 @@
-// === إعدادات الأمر ===
 const config = {
-    name: "بانكاي",             // <-- اسم الأمر
-    description: "طرد عضو من المجموعة",
-    usage: "[رد/@منشن]",
+    name: "بانكاي",
+    description: "kick user",
+    usage: "[reply/@mention]",
     cooldown: 5,
     permissions: [1],
-    credits: "Ꮙ. ᎬᏢᏕᎥ ᏕᏢᎯᏒᎠᎯ",
+    credits: "XaviaTeam",
 };
 
-// بيانات اللغة
 const langData = {
+    en_US: {
+        missingTarget: "Please tag or reply message of user to kick",
+        botNotAdmin: "Bot need to be admin to kick user",
+        botTarget: "Why do you want to kick bot out of group :<?",
+        senderTarget: "Why do you want to kick yourself out of group :v?",
+        botAndSenderTarget:
+            "Why do you want to kick bot and yourself out of group :v?",
+        kickResult: "Kicked {success} user(s)",
+        kickFail: "Failed to kick {fail} user(s)",
+        error: "An error occurred, please try again later",
+    },
+    vi_VN: {
+        missingTarget: "Vui lòng tag hoặc reply tin nhắn của người cần kick",
+        botNotAdmin:
+            "Bot cần được cấp quyền quản trị viên để có thể kick thành viên",
+        botTarget: "Sao lại muốn kick bot ra khỏi nhóm vậy :<?",
+        senderTarget: "Sao bạn lại muốn tự kick mình ra khỏi nhóm vậy :v?",
+        botAndSenderTarget:
+            "Sao bạn lại muốn kick cả bot và mình ra khỏi nhóm vậy :v?",
+        kickResult: "Đã kick thành công {success} người",
+        kickFail: "Kick thất bại {fail} người",
+        error: "Đã có lỗi xảy ra, vui lòng thử lại sau",
+    },
     ar_SY: {
-        missingTarget: "يرجى منشن العضو أو الرد على رسالته لطرده",
-        botNotAdmin: "يجب أن يكون البوت مشرفاً ليتمكن من طرد الأعضاء",
-        botTarget: "لا يمكنك طرد البوت من القروب",
-        senderTarget: "لا يمكنك طرد نفسك من القروب",
-        botAndSenderTarget: "لا يمكنك طرد البوت ونفسك معاً",
-        kickResult: "تم طرد {success} عضو بنجاح",
-        kickFail: "فشل طرد {fail} عضو",
-        error: "حصل خطأ، حاول مرة أخرى لاحقاً",
+        missingTarget: "يرجى منشن العضو أو الرد على رسالته للطرد",
+        botNotAdmin: "يجب أن يكون البوت مشرفًا لطرد المستخدم",
+        botTarget: "لماذا تريد طرد البوت من المجموعة؟",
+        senderTarget: "لماذا تريد طرد نفسك من المجموعة؟",
+        botAndSenderTarget: "لماذا تريد طرد البوت ونفسك من المجموعة؟",
+        kickResult: "تم طرد {success} مستخدم",
+        kickFail: "فشل طرد {fail} مستخدم",
+        error: "حدث خطأ، حاول مرة أخرى لاحقًا",
     },
 };
 
-// قائمة الـ ID الخاص بالمطورين
-const developers = ["61582847128354"]; // ضع ID بتاعك هنا
+// رابط الصورة التي تُرسل قبل الطرد
+const KICK_IMAGE =
+    "https://i.ibb.co/PJK2n1N/Messenger-creation-2-DBBF1-E2-3696-464-A-BA72-D62-B034-DA8-F1.jpg";
 
 // دالة الطرد
 function kick(userID, threadID) {
@@ -35,97 +57,113 @@ function kick(userID, threadID) {
     });
 }
 
-// دالة إرسال صورة الطرد قبل الطرد
-async function sendKickImageWithUser(threadID, userID) {
-    return new Promise((resolve, reject) => {
-        const userAvatarURL = `https://graph.facebook.com/${userID}/picture?type=large`;
-
-        global.api.sendMessage(
-            {
-                body: `🚨 سيتم طرد العضو`,
-                attachment: [
-                    global.utils.getStreamFromURL(userAvatarURL),
-                    global.utils.getStreamFromURL("https://i.ibb.co/PJK2n1N/Messenger-creation-2-DBBF1-E2-3696-464-A-BA72-D62-B034-DA8-F1.jpg")
-                ],
-            },
-            threadID,
-            (err) => {
-                if (err) return reject(err);
-                resolve();
-            }
-        );
+// دالة إرسال الصورة قبل الطرد
+function sendKickImage(threadID) {
+    return new Promise((resolve) => {
+        try {
+            global.api.sendMessage(
+                {
+                    attachment: KICK_IMAGE,
+                },
+                threadID,
+                () => resolve()
+            );
+        } catch (e) {
+            console.error("Send image error:", e);
+            resolve(); // نكمل حتى لو فشل الإرسال
+        }
     });
 }
 
-// المناداة الأساسية
 async function onCall({ message, getLang, data }) {
-    if (!message.isGroup) return;
-
-    const { threadID, mentions, senderID, messageReply, type, reply } = message;
-
     try {
-        const threadInfo = data.thread.info;
-        const adminIDs = threadInfo.adminIDs.map(a => a.id || a);
+        if (!message || !message.isGroup) return;
 
-        const botIsAdmin = adminIDs.includes(global.botID);
-        const isDeveloper = developers.includes(senderID);
+        const {
+            threadID,
+            mentions = {},
+            senderID,
+            messageReply,
+            type,
+            reply,
+        } = message;
 
-        if (!isDeveloper && !botIsAdmin)
-            return reply(getLang("botNotAdmin"));
+        // تحقق من وجود هدف
+        if (Object.keys(mentions).length === 0 && type !== "message_reply")
+            return reply(getLang("missingTarget"));
 
-        // جمع الأعضاء المستهدفين
-        let targetIDs =
+        // حماية في حال لم تكن معلومات القروب جاهزة
+        const threadInfo = data?.thread?.info;
+        if (!threadInfo || !Array.isArray(threadInfo.adminIDs))
+            return reply(getLang("error"));
+
+        const { adminIDs } = threadInfo;
+
+        // جلب الأهداف
+        const targetIDs =
             Object.keys(mentions).length > 0
                 ? Object.keys(mentions)
-                : type === "message_reply"
+                : messageReply && messageReply.senderID
                 ? [messageReply.senderID]
                 : [];
 
-        targetIDs = targetIDs.filter(id => id !== global.botID && id !== senderID);
+        if (targetIDs.length === 0)
+            return reply(getLang("missingTarget"));
 
-        if (targetIDs.length === 0) return reply("لا يوجد أعضاء صالحين للطرد");
+        // تأكد أن البوت أدمن
+        if (!adminIDs.includes(global.botID))
+            return reply(getLang("botNotAdmin"));
+
+        // حالات المنع
+        if (targetIDs.length === 1 && targetIDs[0] === global.botID)
+            return reply(getLang("botTarget"));
+
+        if (targetIDs.length === 1 && targetIDs[0] === senderID)
+            return reply(getLang("senderTarget"));
+
+        if (
+            targetIDs.length === 2 &&
+            targetIDs.includes(global.botID) &&
+            targetIDs.includes(senderID)
+        )
+            return reply(getLang("botAndSenderTarget"));
 
         let success = 0;
         let fail = 0;
 
+        // 🔥 أرسل الصورة أولاً
+        await sendKickImage(threadID);
+
+        // ⛔ ثم ابدأ الطرد
         for (const targetID of targetIDs) {
+            if (!targetID) continue;
+            if (targetID === global.botID || targetID === senderID) continue;
+
             try {
-                // لو العضو مسؤول وما المرسل مش مطور، نتخطى الطرد
-                if (!isDeveloper && adminIDs.includes(targetID)) {
-                    fail++;
-                    continue;
-                }
-
-                // إرسال صورة الطرد قبل الطرد
-                try {
-                    await sendKickImageWithUser(threadID, targetID);
-                    await global.utils.sleep(800);
-                } catch (e) {
-                    console.error("فشل إرسال صورة الطرد:", e);
-                }
-
-                // الطرد
                 await kick(targetID, threadID);
-                await global.utils.sleep(500);
+                if (global.utils?.sleep)
+                    await global.utils.sleep(500);
                 success++;
-
             } catch (e) {
-                console.error("فشل طرد العضو:", targetID, e);
+                console.error("Kick error:", e);
                 fail++;
             }
         }
 
-        if (success > 0) reply(getLang("kickResult").replace("{success}", success));
-        if (fail > 0) reply(getLang("kickFail").replace("{fail}", fail));
+        if (success > 0)
+            await reply(getLang("kickResult", { success }));
+
+        if (fail > 0)
+            await reply(getLang("kickFail", { fail }));
     } catch (e) {
-        console.error("خطأ عام في الطرد:", e);
-        reply(getLang("error"));
+        console.error("Command error:", e);
+        if (message?.reply)
+            message.reply(getLang("error"));
     }
 }
 
-// التصدير النهائي
 export default {
-    config,    // <-- الاسم موجود هنا
+    config,
     langData,
     onCall,
 };
