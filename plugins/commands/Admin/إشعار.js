@@ -1,5 +1,5 @@
 const config = {
-    name: "sendnoti",
+    name: "إشعار",
     aliases: ["sendnotification"],
     description: "Send notification to all groups",
     usage: "[message/reply]",
