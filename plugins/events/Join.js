@@ -4,34 +4,45 @@ import path from 'path';
 import moment from 'moment-timezone';
 
 async function execute({ api, event, Users, Threads }) {
-  switch (event.logMessageType) {
-    case "log:subscribe": {
-      const { addedParticipants } = event.logMessageData;
-      const botUserID = api.getCurrentUserID();
+  if (event.logMessageType !== "log:subscribe") return;
 
-      // جمع معلومات الأعضاء المضافين
-      for (const participant of addedParticipants) {
-        if (participant.userFbId === botUserID) {
-          // إذا تم إضافة البوت
-          return;
-        }
+  const { addedParticipants } = event.logMessageData;
+  const botUserID = await api.getCurrentUserID();
 
-        const userInfo = await api.getUserInfo(participant.userFbId);
-        const profileName = userInfo[participant.userFbId]?.name || "Unknown";
-        const profilePictureUrl = `https://graph.facebook.com/${participant.userFbId}/picture?width=512&height=512&access_token=6628568379%7Cc1e620fa708a1d5696fb991c1bde5662`;  // صورة البروفايل
-        const membersCount = await api.getThreadInfo(event.threadID).then(info => info.participantIDs.length).catch(() => "Unknown");
-        const threadInfo = await api.getThreadInfo(event.threadID);
-        const threadName = threadInfo.threadName || "Unknown";
-        const currentTime = moment().tz("Africa/Casablanca").format("hh:mm A");
-        const formattedTime = currentTime.replace('AM', 'صباحًا').replace('PM', 'مساءً');
+  // جلب معلومات القروب مرة واحدة
+  let threadInfo;
+  try {
+    threadInfo = await api.getThreadInfo(event.threadID);
+  } catch {
+    return console.error("Failed to get thread info");
+  }
+  const membersCountAll = threadInfo.participantIDs.length;
+  const threadName = threadInfo.threadName || "Unknown";
 
-        // صياغة رسالة الترحيب
-        const welcomeMessage = `◆❯━━━━━▣✦▣━━━━━━❮◆\n≪⚠️ إشــعــار بــالإنــضــمــام ⚠️≫\n👥 | الأسـمـاء : 『${profileName}』\n الـتـرتـيـب 🔢 : 『${membersCount}』\n🧭 | إسـم الـمـجـموعـة :『${threadName}』\n📅 | بـ تـاريـخ : ${moment().tz("Africa/Casablanca").format("YYYY-MM-DD")}\n⏰ | عـلـى الـوقـت : ${formattedTime}\n『🔖لا تـسـئ الـلـفـظ وإن ضـاق بـك الـرد🔖』\n◆❯━━━━━▣✦▣━━━━━━❮◆`;
+  // التأكد من وجود مجلد cache
+  const cacheDir = path.join(process.cwd(), 'cache');
+  if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir);
 
-        await sendWelcomeMessage(api, event.threadID, welcomeMessage, profilePictureUrl, membersCount, profileName, threadName);
-      }
-      break;
+  for (const participant of addedParticipants) {
+    if (participant.userFbId === botUserID) continue; // تجاهل إضافة البوت
+
+    let profileName = "Unknown";
+    let profilePictureUrl = "";
+
+    try {
+      const userInfo = await api.getUserInfo(participant.userFbId);
+      profileName = userInfo[participant.userFbId]?.name || "Unknown";
+      profilePictureUrl = `https://graph.facebook.com/${participant.userFbId}/picture?width=512&height=512`;
+    } catch {
+      console.warn(`Failed to get info for user ${participant.userFbId}`);
     }
+
+    const currentTime = moment().tz("Africa/Casablanca").format("hh:mm A");
+    const formattedTime = currentTime.replace('AM', 'صباحًا').replace('PM', 'مساءً');
+
+    const welcomeMessage = `◆❯━━━━━▣✦▣━━━━━━❮◆\n≪ إشــعــار بــالإنــضــمــام ≫\n👥 | الأسـمـاء : 『${profileName}』\n الـتـرتـيـب : 『${membersCountAll}』\n | إسـم الـمـجـموعـة :『${threadName}』\n| بـ تـاريـخ : ${moment().tz("Africa/Casablanca").format("YYYY-MM-DD")}\n| عـلـى الـوقـت : ${formattedTime}\n『لا تـسـئ الـلـفـظ وإن ضـاق بـك لا🔖』\n◆❯━━━━━▣✦▣━━━━━━❮◆`;
+
+    await sendWelcomeMessage(api, event.threadID, welcomeMessage, profilePictureUrl, membersCountAll, profileName, threadName, cacheDir);
   }
 }
 
@@ -50,23 +61,18 @@ function getRandomBackground() {
     "https://i.ibb.co/Tm01gpv/peaceful-landscape-beautiful-background-wallpaper-nature-relaxation-ai-generation-style-watercolor-l.jpg",
     "https://i.ibb.co/qCsmcb6/image-13.png"
   ];
-  const randomIndex = Math.floor(Math.random() * backgrounds.length);
-  return backgrounds[randomIndex];
+  return backgrounds[Math.floor(Math.random() * backgrounds.length)];
 }
 
-// دالة لإرسال رسالة الترحيب باستخدام API
-async function sendWelcomeMessage(api, threadID, message, avatarUrl, membersCount, profileName, threadName) {
+// إرسال رسالة الترحيب
+async function sendWelcomeMessage(api, threadID, message, avatarUrl, membersCount, profileName, threadName, cacheDir) {
   try {
-    const background = getRandomBackground(); // اختيار خلفية عشوائية
-    const apiUrl = `https://api.popcat.xyz/welcomecard?background=${encodeURIComponent(background)}&text1=${encodeURIComponent(profileName)}&text2=مرحبا بك إلى ${threadName}&text3=أنت العضو رقم ${membersCount}&avatar=${encodeURIComponent(avatarUrl)}`;
+    const background = getRandomBackground();
+    const apiUrl = `https://api.popcat.xyz/welcomecard?background=${encodeURIComponent(background)}&text1=${encodeURIComponent(profileName)}&text2=${encodeURIComponent('مرحبا بك إلى ' + threadName)}&text3=${encodeURIComponent('أنت العضو رقم ' + membersCount)}&avatar=${encodeURIComponent(avatarUrl)}`;
 
-    const response = await axios({
-      method: 'get',
-      url: apiUrl,
-      responseType: 'arraybuffer'
-    });
+    const response = await axios.get(apiUrl, { responseType: 'arraybuffer' });
 
-    const imagePath = path.join(process.cwd(), 'cache', `welcome_${Date.now()}.png`);
+    const imagePath = path.join(cacheDir, `welcome_${Date.now()}.png`);
     fs.writeFileSync(imagePath, response.data);
 
     await api.sendMessage({
@@ -74,11 +80,13 @@ async function sendWelcomeMessage(api, threadID, message, avatarUrl, membersCoun
       attachment: fs.createReadStream(imagePath),
     }, threadID);
 
-    // حذف الصورة بعد الإرسال
-    fs.unlinkSync(imagePath);
+    // حذف الصورة بعد إرسال الرسالة
+    fs.unlink(imagePath, (err) => {
+      if (err) console.error("Failed to delete temp welcome image:", err);
+    });
   } catch (error) {
     console.error('Error sending welcome message:', error);
-    await api.sendMessage("حدث خطأ أثناء إرسال رسالة الترحيب.", threadID);
+    await api.sendMessage("❌ حدث خطأ أثناء إرسال رسالة الترحيب.", threadID);
   }
 }
 
