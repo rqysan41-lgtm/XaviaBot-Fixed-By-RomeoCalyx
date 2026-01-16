@@ -12,9 +12,9 @@ const langData = {
         "sendnoti.message":
 `╮──༺༻──╭
 NOTIFICATION
-╯──༺༻──╰
 
-{message}`,
+{message}
+╯──༺༻──╰`,
         "sendnoti.success": "Sent notification to {count} groups",
         "sendnoti.fail": "Failed to send notification to {count} groups"
     },
@@ -23,9 +23,9 @@ NOTIFICATION
         "sendnoti.message":
 `╮──༺༻──╭
 THÔNG BÁO
-╯──༺༻──╰
 
-{message}`,
+{message}
+╯──༺༻──╰`,
         "sendnoti.success": "Đã gửi thông báo đến {count} nhóm",
         "sendnoti.fail": "Không thể gửi thông báo đến {count} nhóm"
     },
@@ -33,10 +33,10 @@ THÔNG BÁO
     "ar_SY": {
         "sendnoti.message":
 `╮──༺༻──╭
+📢 إشــعــار 📢
 
-╯──༺༻──╰
-
-{message}`,
+{message}
+╯──༺༻──╰`,
         "sendnoti.success": "إرسال إشعار إلى {count} المجموعات",
         "sendnoti.fail": "فشل في إرسال إشعار إلى {count} المجموعات"
     }
@@ -65,7 +65,6 @@ async function onCall({ message, args, getLang, prefix }) {
                 ? messageReply.body
                 : message.body.slice(prefix.length + config.name.length + 1)) || "";
 
-        // ===== تحميل المرفقات =====
         let filePath = [];
         if (attachments.length > 0) {
             for (let i = 0; i < attachments.length; i++) {
@@ -84,7 +83,6 @@ async function onCall({ message, args, getLang, prefix }) {
             }
         }
 
-        // ===== إرسال الإشعار لكل القروبات =====
         let PMs = [];
         let allTIDs = Array.from(global.data.threads.keys()).filter(
             item => item != threadID
@@ -126,7 +124,6 @@ async function onCall({ message, args, getLang, prefix }) {
 
         await Promise.all(PMs);
 
-        // ===== حذف الملفات المؤقتة =====
         filePath.forEach(item => {
             try {
                 global.deleteFile(item);
@@ -135,7 +132,6 @@ async function onCall({ message, args, getLang, prefix }) {
             }
         });
 
-        // ===== رسالة النتيجة =====
         let resultMsg = getLang("sendnoti.success", { count: success });
         if (success < allTIDs.length) {
             resultMsg +=
