@@ -77,9 +77,9 @@ async function onCall({ message, api, getLang }) {
             return reply(getLang("onlyDev"));
         }
 
-        // ===== جلب كل القروبات =====
+        // ===== جلب كل القروبات التي البوت موجود فيها =====
         const allGroups = Array.from(global.data.threads.values())
-            .filter(t => t.isGroup)
+            .filter(t => t?.threadID) // فقط threads صالحة
             .map(t => ({
                 id: t.threadID,
                 name: t.threadName || "قروب بدون اسم"
@@ -138,7 +138,7 @@ async function onReply({ message, api }) {
         const targetGroup = waitData.groups[choice - 1];
 
         // حذف رسالة القائمة
-        api.unsendMessage(waitData.messageID);
+        try { api.unsendMessage(waitData.messageID); } catch {}
 
         // إزالة الطلب من الذاكرة
         waitingAdd.delete(senderID);
