@@ -29,7 +29,7 @@ async function onCall({ message, args, getLang }) {
 
     const template = args.join(" ");
 
-    // **تفاعل بالإيموجي على رسالة المستخدم فقط**
+    // تفاعل بالإيموجي على رسالة المستخدم
     await global.api.setMessageReaction("⏳", messageID, threadID);
 
     // جلب أعضاء القروب
@@ -38,6 +38,7 @@ async function onCall({ message, args, getLang }) {
 
     let success = 0;
     let failed = 0;
+    let successNames = [];
     let failedNames = [];
 
     for (let i = 0; i < members.length; i++) {
@@ -58,36 +59,44 @@ async function onCall({ message, args, getLang }) {
             await global.api.changeNickname(newNick, threadID, uid);
             changed = true;
             break;
-          } catch {}
+          } catch (e) {}
         }
 
         if (changed) {
           success++;
+          successNames.push(`▣ ${name}`);
         } else {
           failed++;
-          failedNames.push(name);
+          failedNames.push(`▣ ${name}`);
         }
 
-        await new Promise((res) => setTimeout(res, 300)); // تأخير بسيط
-      } catch {
+        // تأخير بسيط بين كل عملية
+        await new Promise((res) => setTimeout(res, 300));
+
+      } catch (err) {
         failed++;
-        failedNames.push(uid);
+        failedNames.push(`▣ ${uid}`);
+        console.error("Member error:", err); // يوضح السبب لكل عضو
       }
     }
 
     // إرسال تقرير واحد بعد الانتهاء
     let resultMsg = getLang("nicknames.success", { success, failed, template });
 
-    if (failed > 0 && failedNames.length <= 5) {
+    if (successNames.length) {
+      resultMsg += `\n✅ نجح مع:\n${successNames.join("\n")}`;
+    }
+
+    if (failedNames.length) {
       resultMsg += `\n⚠️ فشل مع:\n${failedNames.join("\n")}`;
-    } else if (failed > 5) {
-      resultMsg += `\n⚠️ فشل تغيير ${failed} كنيات`;
     }
 
     message.reply(resultMsg);
   } catch (err) {
-    console.error("nicknames error:", err);
-    message.reply("❌ حدث خطأ أثناء تغيير الكنيات");
+    console.error("nicknames error:", err); // يظهر السبب التفصيلي في console
+    message.reply(
+      `❌ حدث خطأ أثناء تغيير الكنيات\n⚠️ السبب: ${err.message || err}`
+    );
   }
 }
 
