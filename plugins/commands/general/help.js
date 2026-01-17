@@ -34,8 +34,6 @@ ${prefix}${cmd.name} ${cmd.usage || ""}
     // =========================
     let devCmds = [];
     let groupCmds = [];
-    let toolsCmds = [];
-    let funCmds = [];
     let otherCmds = [];
 
     for (const [key, cmd] of commandsConfig.entries()) {
@@ -50,35 +48,25 @@ ${prefix}${cmd.name} ${cmd.usage || ""}
             devCmds.push(name);
         } else if (cat.includes("group") || cat.includes("admin") || cat.includes("المجموعه")) {
             groupCmds.push(name);
-        } else if (cat.includes("tool") || cat.includes("util") || cat.includes("ادوات")) {
-            toolsCmds.push(name);
-        } else if (cat.includes("fun") || cat.includes("game") || cat.includes("ترفيه")) {
-            funCmds.push(name);
         } else {
             otherCmds.push(name);
         }
     }
 
     // =========================
-    // شكل القائمة (ستايل 7)
+    // شكل القائمة (▣ مربعات)
     // =========================
     let body =
 `✦═════ ✧ أوامــر البـوت ✧ ════✦
 
 ✧ المطوّر ✧
-➥ ${devCmds.length ? devCmds.join(" • ") : "لا توجد أوامر"}
+➥ ${devCmds.length ? devCmds.join(" ▣ ") : "لا توجد أوامر"}
 
 ✧ الإدارة ✧
-➥ ${groupCmds.length ? groupCmds.join(" • ") : "لا توجد أوامر"}
-
-✧ الأدوات ✧
-➥ ${toolsCmds.length ? toolsCmds.join(" • ") : "لا توجد أوامر"}
-
-✧ الألعاب ✧
-➥ ${funCmds.length ? funCmds.join(" • ") : "لا توجد أوامر"}
+➥ ${groupCmds.length ? groupCmds.join(" ▣ ") : "لا توجد أوامر"}
 
 ✧ أخرى ✧
-➥ ${otherCmds.length ? otherCmds.join(" • ") : "لا توجد أوامر"}
+➥ ${otherCmds.length ? otherCmds.join(" ▣ ") : "لا توجد أوامر"}
 
 ✦══════════════════════✦
 📝 لشرح أي أمر:
@@ -86,15 +74,20 @@ ${prefix}مساعدة <اسم الأمر>
 `;
 
     // =========================
-    // إرسال القائمة مع الصورة
+    // اختيار خلفية متحركة تلقائيًا
     // =========================
+    const backgrounds = [
+        "https://i.imgur.com/3tBIaSF.gif",
+        "https://i.imgur.com/vWl3Tb5.gif",
+        "https://i.imgur.com/DYfouuR.gif"
+    ];
+
+    const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
+
     try {
-        const image = await global.getStream(
-          "https://i.imgur.com/3tBIaSF.gif", 
-        );
+        const image = await global.getStream(randomBg);
         return message.reply({ body, attachment: image });
     } catch (e) {
-        // لو فشلت الصورة، يرسل النص فقط
         return message.reply(body);
     }
 }
@@ -102,4 +95,4 @@ ${prefix}مساعدة <اسم الأمر>
 export default {
     config,
     onCall
-           }
+            }
