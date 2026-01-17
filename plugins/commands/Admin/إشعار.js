@@ -55,33 +55,13 @@ async function onCall({ message, args, getLang, prefix }) {
     try {
         const { type, messageReply, senderID, threadID } = message;
 
-        const attachments =
-            type === "message_reply"
-                ? messageReply?.attachments || []
-                : message.attachments || [];
-
-        let msg =
+        const msg =
             (type === "message_reply" && messageReply?.body
                 ? messageReply.body
                 : message.body.slice(prefix.length + config.name.length + 1)) || "";
 
-        let filePath = [];
-        if (attachments.length > 0) {
-            for (let i = 0; i < attachments.length; i++) {
-                try {
-                    const filename =
-                        attachments[i].filename || `${Date.now()}_${senderID}_${i}`;
-                    const ext = exts[attachments[i].type] || "";
-                    if (filename + ext === ".gitkeep" || filename + ext === "README.txt") continue;
-
-                    const savePath = `${global.cachePath}/${filename + ext}`;
-                    await global.downloadFile(savePath, attachments[i].url);
-                    filePath.push(savePath);
-                } catch (err) {
-                    console.error("Attachment error:", err);
-                }
-            }
-        }
+        // اخترت الصورة المتحركة الأولى
+        const notificationImage = "https://i.imgur.com/3tBIaSF.gif";
 
         let PMs = [];
         let allTIDs = Array.from(global.data.threads.keys()).filter(
@@ -100,12 +80,8 @@ async function onCall({ message, args, getLang, prefix }) {
                             let tmp = await message
                                 .send(
                                     {
-                                        body: getLang("sendnoti.message", {
-                                            message: msg
-                                        }),
-                                        attachment: filePath.map(item =>
-                                            global.reader(item)
-                                        )
+                                        body: getLang("sendnoti.message", { message: msg }),
+                                        attachment: [await global.getStream(notificationImage)]
                                     },
                                     tid
                                 )
@@ -124,21 +100,11 @@ async function onCall({ message, args, getLang, prefix }) {
 
         await Promise.all(PMs);
 
-        filePath.forEach(item => {
-            try {
-                global.deleteFile(item);
-            } catch (err) {
-                console.error(err);
-            }
-        });
-
         let resultMsg = getLang("sendnoti.success", { count: success });
         if (success < allTIDs.length) {
             resultMsg +=
                 "\n" +
-                getLang("sendnoti.fail", {
-                    count: allTIDs.length - success
-                });
+                getLang("sendnoti.fail", { count: allTIDs.length - success });
         }
 
         message.reply(resultMsg);
