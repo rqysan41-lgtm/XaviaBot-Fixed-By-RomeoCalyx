@@ -90,7 +90,7 @@ ${prefix}مساعدة <اسم الأمر>
     // =========================
     try {
         const image = await global.getStream(
-          "https://i.ibb.co/PJK2n1N/Messenger-creation-2-DBBF1-E2-3696-464-A-BA72-D62-B034-DA8-F1.jpg"
+          "https://i.imgur.com/3tBIaSF.gif", 
         );
         return message.reply({ body, attachment: image });
     } catch (e) {
