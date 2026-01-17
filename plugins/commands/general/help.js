@@ -84,15 +84,14 @@ ${prefix}مساعدة <اسم الأمر>
 
     const randomBg = backgrounds[Math.floor(Math.random() * backgrounds.length)];
 
-    try {
-        const image = await global.getStream(randomBg);
-        return message.reply({ body, attachment: image });
-    } catch (e) {
-        return message.reply(body);
-    }
+    // إرسال النص مع الصورة المتحركة مباشرة
+    return message.reply({
+        body,
+        attachment: [{ type: "image", url: randomBg }]
+    });
 }
 
 export default {
     config,
     onCall
-            }
+                     }
